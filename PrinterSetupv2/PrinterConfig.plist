@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Drivers</key>
+	<dict>
+		<key>BrandIndex</key>
+		<dict>
+			<key>HP</key>
+			<integer>0</integer>
+			<key>Xerox</key>
+			<integer>1</integer>
+		</dict>
+		<key>Drivers</key>
+		<array>
+			<dict>
+				<key>Brand</key>
+				<string>HP</string>
+				<key>Password</key>
+				<string></string>
+				<key>Path</key>
+				<string>your.webserver.com/packages</string>
+				<key>Protocol</key>
+				<string>http</string>
+				<key>Username</key>
+				<string></string>
+			</dict>
+			<dict>
+				<key>Brand</key>
+				<string>Xerox</string>
+				<key>Password</key>
+				<string></string>
+				<key>Path</key>
+				<string>your.webserver.com/packages</string>
+				<key>Protocol</key>
+				<string>http</string>
+				<key>Username</key>
+				<string></string>
+			</dict>
+		</array>
+	</dict>
+	<key>Printers</key>
+	<array>
+		<dict>
+			<key>Brand</key>
+			<string>HP</string>
+			<key>Description</key>
+			<string>RM12 (BW)</string>
+			<key>Device</key>
+			<string>rm12</string>
+			<key>Driver</key>
+			<string>/Library/Printers/PPDs/Contents/Resources/HP LaserJet 4100 Series.gz</string>
+			<key>IP</key>
+			<string>10.31.130.3</string>
+			<key>Location</key>
+			<string>Room12</string>
+			<key>Options</key>
+			<array>
+				<string>HPOption_Duplexer=True</string>
+				<string>printer-is-shared=false</string>
+			</array>
+			<key>Protocol</key>
+			<string>socket</string>
+		</dict>
+		<dict>
+			<key>Brand</key>
+			<string>HP</string>
+			<key>Description</key>
+			<string>Office (BW)</string>
+			<key>Device</key>
+			<string>office</string>
+			<key>Driver</key>
+			<string>/Library/Printers/PPDs/Contents/Resources/HP LaserJet 4350.gz</string>
+			<key>IP</key>
+			<string>10.31.130.4</string>
+			<key>Location</key>
+			<string>Main Office</string>
+			<key>Options</key>
+			<array>
+				<string>printer-is-shared=false</string>
+				<string>HPOption_Duplexer=True</string>
+				<string>HPOption_Tray3=Tray3_500</string>
+				<string>Duplex=None</string>
+				<string>MediaType=None</string>
+				<string>PageSize=Letter</string>
+				<string>HPEconoMode=PrinterDefault</string>
+				<string>HPOption_Disk=True</string>
+				<string>printer-commands=AutoConfigure,Clean,PrintSelfTestPage</string>
+			</array>
+			<key>Protocol</key>
+			<string>socket</string>
+		</dict>
+		<dict>
+			<key>Brand</key>
+			<string>HP</string>
+			<key>Description</key>
+			<string>Office (MFP)</string>
+			<key>Device</key>
+			<string>officemfp</string>
+			<key>Driver</key>
+			<string>/Library/Printers/PPDs/Contents/Resources/HP LaserJet 600 M601 M602 M603.gz</string>
+			<key>IP</key>
+			<string>10.31.130.9</string>
+			<key>Location</key>
+			<string>Main Office</string>
+			<key>Options</key>
+			<array>
+				<string>printer-is-shared=false</string>
+				<string>printer-location='Edgemont School'</string>
+				<string>HPOption_Duplexer=True</string>
+				<string>HPPrintQuality=FastRes1200</string>
+				<string>Duplex=None</string>
+				<string>MediaType=Unspecified</string>
+				<string>PageSize=Letter</string>
+				<string>HPEconoMode=False</string>
+			</array>
+			<key>Protocol</key>
+			<string>socket</string>
+		</dict>
+		<dict>
+			<key>Brand</key>
+			<string>HP</string>
+			<key>Description</key>
+			<string>Office (Color)</string>
+			<key>Device</key>
+			<string>officecolor</string>
+			<key>Driver</key>
+			<string>/Library/Printers/PPDs/Contents/Resources/HP Color LaserJet 4700.gz</string>
+			<key>IP</key>
+			<string>10.31.130.8</string>
+			<key>Location</key>
+			<string>Main Office</string>
+			<key>Options</key>
+			<array>
+				<string>printer-is-shared=false</string>
+				<string>printer-commands=AutoConfigure,Clean,PrintSelfTestPage</string>
+				<string>HPOption_500_Sheet_Feeder_Tray3=True</string>
+				<string>HPOption_500_Sheet_Feeder_Tray4=True</string>
+				<string>Duplex=None</string>
+				<string>MediaType=Unspecified</string>
+				<string>PageSize=Letter</string>
+				<string>HPEconoMode=False</string>
+				<string>HPOption_Duplexer=True</string>
+				<string>HPCollateSupported=True</string>
+				<string>HPOption_Disk=RAMDisk</string>
+			</array>
+			<key>Protocol</key>
+			<string>socket</string>
+		</dict>
+		<dict>
+			<key>Brand</key>
+			<string>HP</string>
+			<key>Description</key>
+			<string>rm12 (MFP)</string>
+			<key>Device</key>
+			<string>rm12mfp</string>
+			<key>Driver</key>
+			<string>/Library/Printers/PPDs/Contents/Resources/HP LaserJet flow MFP M525.gz</string>
+			<key>IP</key>
+			<string>10.31.130.10</string>
+			<key>Location</key>
+			<string>Main Office</string>
+			<key>Options</key>
+			<array>
+				<string>printer-is-shared=false</string>
+				<string>printer-location='rm12 north corner'</string>
+				<string>printer-commands=ReportLevels</string>
+				<string>HPPrintQuality=FastRes1200</string>
+				<string>Duplex=None</string>
+				<string>MediaType=Unspecified</string>
+				<string>PageSize=Letter</string>
+				<string>HPEconoMode=False</string>
+			</array>
+			<key>Protocol</key>
+			<string>socket</string>
+		</dict>
+		<dict>
+			<key>Brand</key>
+			<string>Xerox</string>
+			<key>Description</key>
+			<string>Lower Level</string>
+			<key>Device</key>
+			<string>lowlevel</string>
+			<key>Driver</key>
+			<string>/Library/Printers/PPDs/Contents/Resources/Xerox WorkCentre 5875.gz</string>
+			<key>IP</key>
+			<string>10.31.130.6</string>
+			<key>Location</key>
+			<string>Lower Level</string>
+			<key>Options</key>
+			<array>
+				<string>printer-is-shared=false</string>
+				<string>printer-commands=ReportLevels,ReportStatus,AccountingConfiguration,com.xerox.LDAPQuery</string>
+				<string>XRTrays=FiveTraysHCTT</string>
+				<string>XRHolePunch=TruePunch</string>
+				<string>XRFinisher=HVF_BK</string>
+				<string>MediaType=SystemDefault</string>
+				<string>XROutputDestination=Auto</string>
+				<string>Duplex=DuplexNoTumble</string>
+				<string>XRPrintQuality=TonerSaver</string>
+				<string>XRStapleLocation=TopLeft</string>
+				<string>XRPunchLocation=Left</string>
+			</array>
+			<key>Protocol</key>
+			<string>socket</string>
+		</dict>
+	</array>
+	<key>Version</key>
+	<string>2.0</string>
+</dict>
+</plist>

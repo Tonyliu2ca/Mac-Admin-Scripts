@@ -10,21 +10,28 @@
 #    2015-09-29:
 #      Support for remove Open Directory.
 #      Support adding users to _lpOperrator and _lpadmin
+#    2015-10-06:
+#      Support reset CUPS
+#    2015-10-13:
+#      Support everyone, RemovePrinterLis, and match options.
 # ---------------------------------------------------------
 plBuddy="/usr/libexec/PlistBuddy -c"
 
 # ---------------------------
 # Help
 # ---------------------------
-usage="Usage: $(basename "$0") <options>
-version 2.0 Tony Liu (https://github.com/Tonyliu2ca)
+sname=$(basename "$0")
+usage="$sname version 2.1, Tony Liu (bug reports github.com/Tonyliu2ca)
+have readme.txt for details about the two plist configuration files.
 
-where:
-    -h|--help|-?          show this help text
-    -v|--verbose          verbose mode to display detail infomation
-    -c|--config <config>   printer configuration plist file
-    -l|--list <config>    printer list configuration plist file for specific group computer
-read the readme.txt file about the two configuration files."
+Usage: $sname <options>
+<options>:
+  -h|--help|-?          show this help text
+  -v|--verbose          verbose mode to display detail infomation
+  -c|--config <config>  (must have) printer configuration plist
+  -l|--list <config>    (must have) printer list plist file for specific group computer
+Example: $sname -v -c ./pc.plist -l ./pl.plist
+"
 
 # ===================================
 # Don't change the following codes. #
@@ -38,13 +45,17 @@ Verbose=false
 log_file="/var/log/installPrinters.log"
 log_tag="[Install_Printers v.2]"
 
+ardCompuField=""
+listVersion=""
+
+
 # --------------------------Support Section-----------------------------
 abspath() { pushd . > /dev/null; if [ -d "$1" ]; then cd "$1"; dirs -l +0; else cd "`dirname \"$1\"`"; cur_dir=`dirs -l +0`; if [ "$cur_dir" == "/" ]; then echo "$cur_dir`basename \"$1\"`"; else echo "$cur_dir/`basename \"$1\"`"; fi; fi; popd > /dev/null; }
 
 # ----------------------------------
 # to support verbose mode and logs #
 # ----------------------------------
-logme() { if [ -n "$log_file" ]; then echo "$1" >> "$log_file"; fi; }
+logme() { if [ -n "$log_file" ]; then printf "$1\n" >> "$log_file"; fi; }
 vecho() { if $Verbose; then echo "$1"; fi; logme "$1"; }
 initialLog() { if [ -n "$log_file" ]; then touch "$log_file"; fi; logme "`date`: $1 starting ... "; }
 closeLog() { logme "`date`: $1 is done ... "; }
@@ -52,50 +63,6 @@ closeLog() { logme "`date`: $1 is done ... "; }
 # ---------------------------CUPS Section-------------------------------
 stopCUPS() { cancel -a; launchctl stop org.cups.cupsd; sleep 2; }
 startCUPS() { launchctl start org.cups.cupsd; }
-
-# --------------------------------------------------
-# Remove special all null, dnssd, lpd printers.
-# --------------------------------------------------
-rm_spPrinters()
-{
-	vecho "[rm_spPrinters] initial print queue list=="
-	lpstat -v
-	vecho "---------------------------------------------------------------"
-	# stopCUPS
-	
-   lpstat -p | awk '{print $2}' | while read printer; do
-		lpstat -v $printer &>/dev/null
-		if [ $? == 0 ]; then
-			device=`lpstat -v $printer | awk '{print $4}'`
-			description=`lpstat -l -p $printer | grep Description | awk -F ":" '{print $2}'`
-			if grep -q "dev/null" <<< "$device"; then
-				vecho "[rm_spPrinters] .Delete Printer: $printer , device=///dev/null"
-				lpadmin -x $printer
-			else if grep -q "dnssd:" <<< "$device"; then
-			  vecho "[rm_spPrinters] .Delete Printer: $printer , Device=$device, Name=$description"
-				lpadmin -x $printer
-			else if grep -q "lpd:" <<< "$device"; then
-				vecho "[rm_spPrinters] .Delete Printer: $printer , Device=$device, Name=$description"
-				lpstat -v $printer
-				lpadmin -x $printer
-			else
-				vecho "[rm_spPrinters] Keep: $printer, Device=$device , Name=$description"
-				cupsenable -c $printer
-				lpadmin -p $printer -o printer-error-policy=abort-job
-			fi; fi; fi
-		else
-			vecho "[rm_spPrinters] Ignored: $printer"
-		fi
-	done 
-	vecho "[rm_spPrinters] current print queue list=="
-	lpstat -v
-	vecho "---------------------------------------------------------------"
-	#startCUPS
-}
-
-# --------------------------------------------------
-# backup CUPS system
-# --------------------------------------------------
 backupCUPS()
 {
    local spaces="  $1"
@@ -109,9 +76,6 @@ backupCUPS()
    vecho "${spaces}[backupCUPS] CUPS backup -> $backupDIR"
 }
 
-# --------------------------------------------------
-# reset CUPS system, i.e. remove all printers.
-# --------------------------------------------------
 emptyCUPs()
 {
    local spaces="  $1"
@@ -126,15 +90,15 @@ emptyCUPs()
 rmAllPrinters()
 {
    local spaces="  $1"
-	vecho "${spaces}[rmAllPrinters] ==Initial print queue list=="
-	lpstat -v| awk '{print $3 $4}' | while read printer; do
-   	vecho "  ${spaces} == $printer"
-	done
-	vecho "${spaces}[rmAllPrinters] --------------------------------------------------"
+#	vecho "${spaces}[rmAllPrinters] ==Initial print queue list=="
+#	lpstat -v| awk '{print $3 $4}' | while read printer; do
+#  	vecho "  ${spaces} == $printer"
+#	done
+#	vecho "${spaces}[rmAllPrinters] --------------------------------------------------"
    lpstat -p | awk '{print $2}' | while read printer; do
-		lpadmin -x $printer
+		lpadmin -x $printer &>/dev/null
+		vecho "${spaces}[rmAllPrinters] printer <$printer> is removed."
 	done
-	vecho "${spaces}[rmAllPrinters] all removed."
 }
 
 # ---------------------------Printer Driver Section-----------------------------------
@@ -173,7 +137,7 @@ seekBrandDriver()
    local configFile="$3"
    local spaces="  $4"
    iBrand=$($plBuddy "print :Drivers:Drivers:$index:${c_dConfigName[$c_dBrand]}" "$configFile" 2>&-)
-   if [ "$?" != "0" ]; then return 2; fi
+   if (( $? != 0 )); then return 2; fi
    # to lower case
 	iBrand=`echo ${iBrand//[[:space:]]/} | awk '{print tolower($0)}'`
 	brand=`echo ${brand//[[:space:]]/} | awk '{print tolower($0)}'`
@@ -202,7 +166,7 @@ dlBrandPDriver()
    url="${purl}://${url}"
 	vecho "${spaces}[dlBrandPDriver] package from <$url>..."
    /usr/bin/curl -o "$dPackage" "$url" 2>&-
-	if [ "$?" != "0" ]; then vecho "[dlBrandPDriver] driver DMG file <$url> download failed."; return -1; fi
+	if (( $? != 0 )); then vecho "[dlBrandPDriver] driver DMG file <$url> download failed."; return -1; fi
 	vecho "${spaces}[dlBrandPDriver] save driver to <$dPackage>..."
 	return 0
 }
@@ -220,10 +184,10 @@ instPackage()
    vecho "${spaces}[instPackage] starting."
 	local tempMountDir=`/usr/bin/mktemp -d "$dTempFile"`;
 	hdiutil attach "$1" -mountpoint "$tempMountDir" -nobrowse -noverify -noautoopen 2>&-
-	if [ "$?" != "0" ]; then vecho "${spaces}[instPackage] attach DMG <$1> error."; return 1; fi
+	if (( $? != 0 )); then vecho "${spaces}[instPackage] attach DMG <$1> error."; return 1; fi
 	vecho "${spaces}[instPackage] dmg attach to <$tempMountDir>."
 	/usr/sbin/installer -pkg "$(/usr/bin/find $tempMountDir -maxdepth 1 \( -iname \*\.pkg -o -iname \*\.mpkg \))" -target "/";
-	if [ "$?" != "0" ]; then vecho "${spaces}[instPackage] attach DMG <$1> error."; return 2; fi
+	if (( $? != 0 )); then vecho "${spaces}[instPackage] attach DMG <$1> error."; return 2; fi
 
 	/usr/bin/hdiutil detach "$tempMountDir";
 	/bin/rm -rf "$tempMountDir";
@@ -253,11 +217,11 @@ instBrandPDriver()
    while $go; do
    	seekBrandDriver "$index" "$brand" "$confgFile" "$spaces"
    	ierror=$?
-   	if [ "$ierror" = "0" ]; then
+   	if (( $ierror == 0 )); then
          dlBrandPDriver "$index" "$confgFile" "$spaces"
-	   	if [ "$?" = "0" ]; then
+	   	if (( $? == 0 )); then
 	   	   instPackage "$dPackage" "$spaces"
-	   	   if [ "$?" = "0" ]; then
+	   	   if (( $? == 0 )); then
    	         vecho "${spaces}[instBrandPDriver] Printer[$index], driver installed."
                go=false
    	         ireturn=0
@@ -269,7 +233,7 @@ instBrandPDriver()
    	   else
    	      let "index++"
          fi
-      else if [ "$ierror" = "2" ]; then
+      else if (( $ierror == 2 )); then
          vecho "${spaces}[instBrandPDriver] Printer[$index] driver NOT found."
          go=false
          ireturn=2
@@ -277,7 +241,7 @@ instBrandPDriver()
       	let "index++"
       fi; fi
    done
-   if [ "$ireturn" = "0" ]; then vecho "${spaces}[instBrandPDriver] <$brand> printer driver installed."; \
+   if (( $ireturn == 0 )); then vecho "${spaces}[instBrandPDriver] <$brand> printer driver installed."; \
    else  vecho "${spaces}[instBrandPDriver] <$brand> printer driver install failed."; fi
    return $ireturn
 }
@@ -313,7 +277,7 @@ reachablePrinter()
 { 
    local spaces="  $2"
    ping -c1 -W10 $1 &>/dev/null;
-   if [ "$?" = "0" ]; then
+   if (( $? == 0)); then
       vecho "${spaces}[reachablePrinter] printer <$1> is reachable."; 
       return 0
    else 
@@ -343,8 +307,8 @@ readPrinterList_Array()
 	local count=0
 
 	while true; do
-		pName=$($plBuddy "print :CompGroups:$index:PrinterList:$count" "$sPList" 2>&-)
-		if [ "$?" != "0" ]; then return $count; fi;
+		pName=$($plBuddy "print :CompGroups:$compGroup:PrinterList:$count" "$sPList" 2>&-)
+		if (( $? != 0 )); then return $count; fi;
 		pPrinterListArray[count]="$pName"
 		vecho "${spaces}[readPrinterList_Array] read printer <$pName> at <$count>."
 		let "count++"
@@ -370,7 +334,7 @@ readPConfigPrinters_Array()
 
 	while true; do
 		rname=$($plBuddy "print :Printers:$index:Description" "$pConfig" 2>&-)
-		if [ "$?" != "0" ]; then return $index; fi;
+		if (( $? != 0 )); then return $index; fi;
 		pConfigListArray[index]="$rname"
 		vecho "${spaces}[readPConfigPrinters_Array] read printer <$rname> at <$index>."
 		let "index++"
@@ -420,14 +384,14 @@ readPrinterConfig()
    while true; do
       #$plBuddy "print :Printers:$index:$c_pOptionName:$count" "$configFile"
       option=$($plBuddy "print :Printers:$index:$c_pOptionName:$count" "$pConfig" 2>&-)
-      if [ "$?" != "0" ]; then
+		if (( $? != 0 )); then
 			break;
       else
          pOptionStr="$pOptionStr $option"
 	   	let "count++"
    	fi
    done
-   vecho "${spaces}[readPrinterConfig] Printer[$index]: Options=<$pOptionStr>, numners: <$count>"
+   vecho "${spaces}[readPrinterConfig] Printer[$index]: Options=<$pOptionStr>, total=<$count>"
    return 0
 }
 
@@ -463,17 +427,18 @@ setupPrinters()
 		vecho "${spaces}[setupPrinters] ERROR: Printer Configuration file has <$ireturn> printer listed."
 		return -1;
 	fi
+	#echo "compGroup=$compGroup"
 	readPrinterList_Array "$compGroup" "$pList" "$spaces"
 	ireturn=$?
 	if (( $ireturn < 1 )); then
-		vecho "${spaces}[setupPrinters] comuter group <> has <$ireturn> printer in Printer List file."
+		vecho "${spaces}[setupPrinters] computer group <$compGroup> has <$ireturn> printer in Printer List file."
 		return -2;
 	fi
 
 	for pName in "${pPrinterListArray[@]}"; do
-		vecho "${spaces}[setupPrinters] Processing printer <$pName>, count=$count."
+		vecho "${spaces}[setupPrinters] Processing printer[$count] <$pName>."
 		readPrinterConfig "$pName" "$pConfig" "$spaces"
-		if [ "$?" = "0" ]; then
+		if (( $? == 0 )); then
 			# test if the printer driver exist.			
 			if [ ! -f "${pFeatureArray[$c_pDriver]}" ]; then
 				instBrandPDriver "${pFeatureArray[$c_pBrand]}" "$pConfig" "$spaces"
@@ -481,21 +446,24 @@ setupPrinters()
 			if [ -f "${pFeatureArray[$c_pDriver]}" ]; then
 				# test if printer is reachable.
 				reachablePrinter "${pFeatureArray[$c_pIP]}" "$spaces"
-				if [ "$?" != "0" ]; then vecho "${spaces}[setupPrinters] Warning: Printer <$count> is not online."; fi
+				if (( $? != 0 )); then vecho "${spaces}[setupPrinters] Warning: Printer <$count> is not online."; fi
 					# Install the printer
 					local sDes="${pFeatureArray[$c_pDesciption]}"
 					local sLoc="${pFeatureArray[$c_pLocation]}"
-					local sDest="${pFeatureArray[$c_pDevice]}"
-					local sDev="${pFeatureArray[$c_pProtocol]}://${pFeatureArray[$c_pIP]}"
+					local sDev="${pFeatureArray[$c_pDevice]}"
+					local sAddr="${pFeatureArray[$c_pProtocol]}://${pFeatureArray[$c_pIP]}"
 					local sPPD="${pFeatureArray[$c_pDriver]}"
-					lpadmin -p "$sDest" -E -L "sLoc" -D "$sDes" -v "$sDev" -P "$sPPD"
-					if [ "$?" != "0" ]; then vecho "${spaces}[setupPrinters] printer set up failed <$?>..."; else let "printerOK++"; fi
-					lpadmin -p "$sDes" -o "$pOptionStr"
+					lpadmin -p "$sDev" -E -L "$sLoc" -D "$sDes" -v "$sAddr" -P "$sPPD"
+					if (( $? != 0 )); then vecho "${spaces}[setupPrinters] warning: printer set up failed <$?>..."; 
+					else vecho "${spaces}[setupPrinters] printer <$sDes> has been set up."; let "printerOK++"; fi
+					lpadmin -p "$sDev" -o "$pOptionStr"
+					if (( $? != 0 )); then vecho "${spaces}[setupPrinters] warning: set printer options failed <$?>.."; fi
 			else
 				echo "${spaces}[setupPrinters] Printer PPD file <${pFeatureArray[$c_pDriver]}> not exist."
 			fi
 		fi
 		let "count++"
+		vecho ""
 	done
    vecho "${spaces}[setupPrinters] done, $count printer(s) processed, $printerOK printer(s) setup successful."
    return $ireturn
@@ -522,15 +490,15 @@ function seekCompGroup()
 	local sDefault=false
 	
    sText=$(defaults read /Library/Preferences/com.apple.RemoteDesktop $sField)
-	sText=`echo ${sText//[[:space:]]/} | awk '{print tolower($0)}'`
-   vecho "${spaces}[testCompID] current ComputerInfo: <$sText> is <$sID>."
+	sText=$(echo ${sText//[[:space:]]/} | awk '{print tolower($0)}')
+   vecho "${spaces}[testCompID] current ComputerInfo field <$sField>=<$sText>."
 	# turn to lower case and delete all spaces
    while true; do
 		sID=$($plBuddy "print CompGroups:$index:ComputerID" "$sPList" 2>&-)
-		if  [ "$?" == "0" ]; then 
+		if (( $? == 0 )); then
 			sID=`echo ${sID//[[:space:]]/} | awk '{print tolower($0)}'`
 			if [[ $sText == *"$sID"* ]]; then
-				vecho "${spaces}[seekCompGroup] found computer group <$index>."
+				vecho "${spaces}[seekCompGroup] found computer group[$index]=$sID."
 				found=true; myReturn=$index; break;
 			fi
 		else
@@ -538,9 +506,10 @@ function seekCompGroup()
 		fi
 		sDefault=$($plBuddy "print CompGroups:$index:Default" "$sPList" 2>&-)
 		if $sDefault; then defaultindex=$index; fi
+		let "index++";
    done
    if ! $found; then 
-   	if (( $defaultindex < 0 )) ; then
+   	if (( $defaultindex >= 0 )) ; then
    		myReturn=$defaultindex
    		vecho "${spaces}[seekCompGroup] NOT found computer group, use default <$defaultindex>."
    	else
@@ -562,9 +531,9 @@ initRPrinterList()
    vecho "${spaces}[initRPrinterList] sPlist=<$1>."
    ardCompuField=$($plBuddy "print ComputerInfo" "$sPList" 2>&-)
 	listVersion=$($plBuddy "print Version" "$sPList" 2>&-)
-   vecho "${spaces}[initRPrinterList] ardCompuField=<$ardCompuField>"
-   vecho "${spaces}[initRPrinterList] Version=<$listVersion>"
-   vecho "${spaces}[initRPrinterList] Fnished reading common fields from printer list <$1>."
+   vecho "${spaces}		ardCompuField=<$ardCompuField>"
+   vecho "${spaces}		Version=<$listVersion>"
+   vecho "${spaces}		Fnished reading common fields from printer list <$1>."
 }
 
 # ---------------------------Permissions Section-----------------------------------
@@ -576,9 +545,9 @@ initRPrinterList()
 # Return:
 #    N/A
 # CALL:
-#	  goPrinterOperators "$compGroup" "$pList" "$spaces"
+#	  set_lpOperators "$compGroup" "$pList" "$spaces"
 # -------------------------------------------------------
-goPrinterOperators()
+set_lpOperators()
 {
 	local index="$1"
 	local sPlist="$2"
@@ -590,19 +559,19 @@ goPrinterOperators()
 	while true; do
 		group=$($plBuddy "print :CompGroups:$index:PrinterOperator:$count:group" "$sPlist" 2>&-)
 		member=$($plBuddy "print :CompGroups:$index:PrinterOperator:$count:member" "$sPlist" 2>&-)
-		if [ "$?" != "0" ]; then
+		if (( $? != 0 )); then
 			break;
 		else
-		   dseditgroup -o edit -a "$member" -t $group _lpoperator
-		   if [ "$?" != "0" ]; then
-				vecho "${spaces}[goPrinterOperators] ERROR $?: adding member <$member> as <$group>."
+		   dseditgroup -o edit -a "$member" -t $group _lpoperator &>/dev/null
+			if (( $? != 0 )); then
+				vecho "${spaces}[set_lpOperators] ERROR $?: adding member <$member> as <$group>."
 		   else
-				vecho "${spaces}[goPrinterOperators] added member <$member> as <$group>."
+				vecho "${spaces}[set_lpOperators] added member <$member> as <$group>."
 			fi
 		fi
 		let "count++";
 	done
-	vecho "${spaces}[goPrinterOperators] added <$count> group/user to printer operator group."
+	vecho "${spaces}[set_lpOperators] added <$count> group/user to printer operator group."
 }
 
 # -------------------------------------------------------
@@ -613,9 +582,9 @@ goPrinterOperators()
 # Return:
 #    N/A
 # CALL:
-#    goPrinterAdmin "$compGroup" "$pList" "$spaces"
+#    set_lpAdmin "$compGroup" "$pList" "$spaces"
 # -------------------------------------------------------
-goPrinterAdmin()
+set_lpAdmin()
 {
 	local index="$1"
 	local sPlist="$2"
@@ -627,20 +596,282 @@ goPrinterAdmin()
 	while true; do
 		group=$($plBuddy "print :CompGroups:$index:PrinterAdmin:$count:group" "$sPlist" 2>&-)
 		member=$($plBuddy "print :CompGroups:$index:PrinterAdmin:$count:member" "$sPlist" 2>&-)
-		if [ "$?" != "0" ]; then
+		if (( $? != 0 )); then
 			break;
 		else
-		   dseditgroup -o edit -a "$member" -t $group _lpadmin
-		   if [ "$?" != "0" ]; then
-				vecho "${spaces}[goPrinterAdmin] ERROR $?: adding member <$member> as <$group>."
+		   dseditgroup -o edit -a "$member" -t $group _lpadmin &>/dev/null
+			if (( $? != 0 )); then
+				vecho "${spaces}[set_lpAdmin] ERROR $?: adding member <$member> as <$group>."
 		   else
-				vecho "${spaces}[goPrinterAdmin] added member <$member> as <$group>."
+				vecho "${spaces}[set_lpAdmin] added member <$member> as <$group>."
 			fi
 		fi
 		let "count++";
 	done
-	vecho "${spaces}[goPrinterAdmin] added <$count> group/user to printer admin group."
+	vecho "${spaces}[set_lpAdmin] added <$count> group/user to printer admin group."
 }
+
+
+# -------------------------------------------------------
+# Compare two strings, like <left> <match> <right>  #
+# Input:
+#    $1 = left side
+#    $2 = right side
+#    $3 = match string
+# Return:
+#    0: if match
+#    1: if NOT match
+# CALL:
+#    isMatchString "$name" "$device" "$match" "$spaces"
+# -------------------------------------------------------
+isMatchString()
+{
+   local left="$1"
+   local right="$2"
+   local match="$3"
+   local spaces="  $4"
+   local iret=1
+   
+	case "$match" in
+		"like")
+			if [[ "$left" = *"$right"* ]]; then
+				vecho "${spaces}[isMatchString] <$left> match($match) <$right>"
+				iret=0
+			fi
+		;;
+		"!like")
+			if [[ "$left" != *"$right"* ]]; then
+				vecho "${spaces}[isMatchString] <$left> match($match) <$right>"
+				iret=0
+			fi
+		;;
+		"is"|"=")
+			if [[ "$left" == "$right" ]]; then
+				vecho "${spaces}[isMatchString] <$left> match($match) <$right>"
+				iret=0
+			fi
+		;;
+		"!is"|"!=")
+			if [[ "$left" != "$right" ]]; then
+				vecho "${spaces}[isMatchString] <$left> match($match) <$right>"
+				iret=0
+			fi
+		;;
+		"-z"|"null")
+			if [ -z "$left" ]; then
+				vecho "${spaces}[isMatchString] <$left> match($match) <$right>"
+				iret=0
+			fi
+		;;
+		"-n"|"!null")
+			if [ -z "$left" ]; then
+				vecho "${spaces}[isMatchString] <$left> match($match) <$right>"
+				iret=0
+			fi
+		;;
+		">"|"gt")
+			if [[ "$left" > "$right" ]]; then
+				vecho "${spaces}[isMatchString] <$left> match($match) <$right>"
+				iret=0
+			fi
+		;;
+		"<"|"lt")
+			if ! [[ "$left" > "$right" ]]; then
+				vecho "${spaces}[isMatchString] <$left> match($match) <$right>"
+				iret=0
+			fi
+		;;
+		">="|"nl")
+			if ! [ "$left" < "$right" ]; then
+				vecho "${spaces}[isMatchString] <$left> match($match) <$right>"
+				iret=0
+			fi
+		;;
+	esac
+	return $iret
+}
+
+# -------------------------------------------------------
+# Remove descritpion matched printers  #
+# Input:
+#    $1 = description name
+#    $2 = match string
+# Return:
+#    N/A
+# CALL:
+#    rmPrinterDescrition "$name" "$spaces"
+# -------------------------------------------------------
+rmPrinterDescrition()
+{
+	local name="$1"
+	local match="$2"
+   local spaces="  $3"
+	local count=0
+	
+#	vecho "${spaces}[rmPrinterDescrition] initial print queue list=="
+#	lpstat -v 2>&- | sed -e "s/^/  ${spaces}-> /"
+	# stopCUPS
+	
+	for printer in `lpstat -p | awk '{print $2}' | grep -v "unknow"`; do
+#   lpstat -p 2>&- | awk '{print $2}' | while read printer; do
+		lpstat -v $printer &>/dev/null
+		if (( $? == 0 )); then
+			#device=`lpstat -v $printer | awk '{print $3}' | sed 's/:$//'`
+			device="$printer"
+			description=`lpstat -l -p $printer | grep Description | awk -F ":" '{print $2}'`
+			isMatchString "$description" "$name" "$match" "$spaces"
+			if (( $? == 0 )); then
+				lpadmin -x $printer 2>&-
+				let "count++";
+				vecho "${spaces}[rmPrinterDescrition] .Delete Printer($count): $printer , description match($match) <$name>"
+			fi
+		fi
+	done 
+#	vecho "${spaces}[rmPrinterDescrition] current print queue list=="
+#	lpstat -v 2>&- | sed -e "s/^/  ${spaces}-> /"
+	#startCUPS
+   return $count
+}
+
+# -------------------------------------------------------
+# Remove Device matched printers  #
+# Input:
+#    $1 = Device name
+#    $2 = match string
+# Return:
+#    N/A
+# CALL:
+#    rmPrinterDevice "$name" "$spaces"
+# -------------------------------------------------------
+rmPrinterDevice()
+{
+	local name="$1"
+	local match="$2"
+   local spaces="  $3"
+   local count=0
+#	vecho "${spaces}[rmPrinterDevice] initial print queue list=="
+#	lpstat -v 2>&- | sed -e "s/^/  ${spaces}-> /"
+	# stopCUPS
+	
+	for printer in `lpstat -p | awk '{print $2}' | grep -v "unknow"`; do
+#   lpstat -p 2>&- | awk '{print $2}' | while read printer; do
+		lpstat -v $printer &>/dev/null
+		if (( $? == 0 )); then
+			#device=`lpstat -v $printer | awk '{print $3}' | sed 's/:$//'`
+			device="$printer"
+			description=`lpstat -l -p $printer | grep Description | awk -F ":" '{print $2}'`
+			isMatchString "${device/:/}" "$name" "$match" "$spaces"
+			if (( $? == 0 )); then
+				lpadmin -x $printer 2>&-
+				let "count++";
+				vecho "${spaces}[rmPrinterDevice] .Delete Printer($count): $printer , Device match <$name>"
+			fi
+		fi
+	done 
+#	vecho "${spaces}[rmPrinterDevice] current print queue list=="
+#	lpstat -v 2>&- | sed -e "s/^/  ${spaces}-> /"
+	#startCUPS
+	return $count
+}
+
+# -------------------------------------------------------
+# Remove Protocol matched printers  #
+# Input:
+#    $1 = Protocol name
+#    $2 = match string
+# Return:
+#    N/A
+# CALL:
+#    rmPrinterProtocol "$name" "$spaces"
+# -------------------------------------------------------
+rmPrinterProtocol()
+{
+	local count=0
+	local name="$1"
+	local match="$2"
+   local spaces="  $3"
+   
+	# stopCUPS
+	for printer in `lpstat -p | awk '{print $2}' | grep -v "unknow"`; do
+#   lpstat -p 2>&- | awk '{print $2}' | while read printer; do
+		lpstat -v $printer &>/dev/null
+		if (( $? == 0 )); then
+			# device=`lpstat -v $printer | awk '{print $4}'`
+			# device=`lpstat -v $printer | awk '{print $3}' | sed 's/:$//'`
+			device="$printer"
+			description=`lpstat -l -p $printer | grep Description | awk -F ":" '{print $2}'`
+			# protocol=`lpstat -v $printer | awk '{print $4}'| cut -f1 -d":"`
+			protocol=`lpstat -v $printer | awk '{print $4}'`
+			isMatchString "$protocol" "$name" "$match" "$spaces"
+			if (( $? == 0 )); then
+				lpadmin -x $printer 2>&-
+		   	let "count++";
+				vecho "${spaces}[rmPrinterProtocol] .Delete Printer($count): $printer, protocol match <$name>."
+			fi
+		fi
+	done 
+	return $count
+}
+
+# -------------------------------------------------------
+# Remove printers defined in RemovePrinterList array  #
+# Input:
+#    $1 = the compGroups index
+#    $2 = printer list file
+# Return:
+#    N/A
+# CALL:
+#    removePrinterList "$compGroup" "$pList" "$spaces"
+# -------------------------------------------------------
+removePrinterList()
+{
+	local index="$1"
+	local sPlist="$2"
+   local spaces="  $3"
+	local count=0
+	local type=""
+	local name=""
+	local match=""
+	local ireturn=0
+	
+#	vecho "${spaces}[removePrinterList] start remove printer list."
+	vecho "${spaces}[removePrinterList] initial print queue list=="
+	lpstat -v 2>&- | sed -e "s/^/  ${spaces}-> /"
+
+	while true; do
+		type=$($plBuddy "print :CompGroups:$index:RemovePrinterList:$count:Type" "$sPlist" 2>&-)
+		name=$($plBuddy "print :CompGroups:$index:RemovePrinterList:$count:Name" "$sPlist" 2>&-)
+		match=$($plBuddy "print :CompGroups:$index:RemovePrinterList:$count:Compare" "$sPlist" 2>&-)
+		if (( $? != 0 )); then
+			break;
+		else
+			vecho "${spaces}[removePrinterList] processing: type=<$type> match=<$match> name=<$name>."
+			case $type in
+				Description)
+				rmPrinterDescrition "$name" "$match" "$spaces"
+				ireturn=$?
+				;;
+				DeviceName)
+				rmPrinterDevice "$name" "$match" "$spaces"
+				ireturn=$?
+				;;
+				Protocol)
+				rmPrinterProtocol "$name" "$match" "$spaces"
+				ireturn=$?
+				;;
+			esac
+			vecho "${spaces}[removePrinterList] removed <$ireturn> printer(s): whoes type=<$type> matches <$match> name=<$name>."
+#			vecho ""
+		fi
+		let "count++";
+	done
+
+	vecho "${spaces}[removePrinterList] current print queue list=="
+	lpstat -v 2>&- | sed -e "s/^/  ${spaces}-> /"
+	vecho ""
+#	vecho "${spaces}[removePrinterList] <$count> records of removePrinters have been processed."
+}
+
 
 # ----------------------------------------------------------
 # remove from OD binding  #
@@ -659,88 +890,128 @@ removeODBind()
    local spaces="  $3"
 	local removeOD=false
 	
-	removeOD=$($plBuddy "print CompGroups:$index:removeOD" "$sPList" 2>&-)
-	if  [ "$?" = "0" ] && [ $removeOD ]; then
-		od=$(dscl localhost -list /LDAPv3);
-		if [ -n "$od" ]; then 
-		   dsconfigldap -fr "$od"
-		   vecho "${spaces}[removeODBind] removed from OD binding."
+	removeOD=$($plBuddy "print CompGroups:$index:removeOD" "$sPlist" 2>&-)
+	if  (( $? == 0 )) && $removeOD ; then
+		od=$(dscl localhost -list /LDAPv3 2>&-)
+		if [ -n "$od" ]; then
+		   dsconfigldap -fr "$od" 2>&-
+		   vecho "${spaces}[removeODBind] removeOD=$removeOD, OD is unbound."
 		else
-			vecho "${spaces}[removeODBind] not binding OD."
+			vecho "${spaces}[removeODBind] removeOD=$removeOD, no OD binding."
 		fi;
 	else
-	   vecho "${spaces}[removeODBind] no removing from OD binding."
+	   vecho "${spaces}[removeODBind] removeOD=$removeOD, OD binding not touched."
 	fi
 	return 0
 }
+
+
+# ----------------------------------------------------------
+# reset CUPS printers  #
+# Input:
+#    $1 = the compGroups index
+#    $2 = printer list file
+# Return:
+#    N/A
+# CALL:
+#	  resetCUPS "$compGroup" "$pList" "$spaces"
+# ----------------------------------------------------------
+resetCUPS()
+{
+	local index="$1"
+	local sPlist="$2"
+   local spaces="  $3"
+	local ifreset=false
+	
+	ifreset=$($plBuddy "print CompGroups:$index:resetCUPS" "$sPlist" 2>&-)
+	if  (( $? == 0 )) && $ifreset ; then
+#	if  $ifreset; then
+		rmAllPrinters "$spaces"
+		vecho "${spaces}[resetCUPS] removed all printers."
+	else
+	   vecho "${spaces}[resetCUPS] CUPS has no change."
+	fi
+	return 0
+}
+
+# ----------------------------------------------------------
+# reset CUPS printers  #
+# Input:
+#    $1 = the compGroups index
+#    $2 = printer list file
+# Return:
+#    N/A
+# CALL:
+#	  resetCUPS "$compGroup" "$pList" "$spaces"
+# ----------------------------------------------------------
+setEveryone()
+{
+	local index="$1"
+	local sPlist="$2"
+   local spaces="  $3"
+	local ifreset=false
+	
+	ifreset=$($plBuddy "print CompGroups:$index:everyone" "$sPList" 2>&-)
+	if  (( $? == 0 )) && $ifreset ; then
+		dseditgroup -o edit -a everyone -t group _lpadmin 2>&-
+		vecho "${spaces}[setEveryone] added everyone to _lpadmin."
+	else
+		dseditgroup -o edit -d everyone -t group _lpadmin 2>&-
+	   vecho "${spaces}[setEveryone] deleted everyone from _lpadmin."
+	fi
+	return 0
+}
+
 
 # ---------------------------Main Section-----------------------------------
 # main function #
 start()
 {
-	initialLog "$log_tag"
    local spaces=" ."
+   local iRet=0
+   
 	vecho "${spaces}[Start] start."
 	if [ ! -f "$pConfig" ]; then vecho "${spaces}[Start] printer configuration file <$pConfig> not exist." 1>&2; exit -1; fi
 	if [ ! -f "$pList" ]; then vecho "${spaces}[Start] printer list file <$pList> not exist." 1>&2; exit -1; fi
    initRPrinterList "$pList" "$spaces"
    seekCompGroup "$ardCompuField" "$pList" "$spaces"
    compGroup=$?
-	if (( $compGroup < 0 )); then
-		vecho "${spaces}[Start] computer group index is <$compGroup>."
-		closeLog "$log_tag" "$spaces"
-		exit 1
+	if (( $compGroup < 255 )); then
+		removeODBind "$compGroup" "$pList" "$spaces"
+		resetCUPS "$compGroup" "$pList" "$spaces"
+		set_lpOperators "$compGroup" "$pList" "$spaces"
+		set_lpAdmin "$compGroup" "$pList" "$spaces"
+		removePrinterList "$compGroup" "$pList" "$spaces"
+		setEveryone "$compGroup" "$pList" "$spaces"
+		setupPrinters "$compGroup" "$pList" "$pConfig" "$spaces"
+
+		vecho "${spaces}>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+		vecho "${spaces} current printers:"
+		lpstat -v 2>&- | sed -e "s/^/  ${spaces}-> /"
+		vecho "${spaces}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+		vecho ""
 	fi
-	removeODBind "$compGroup" "$pList" "$spaces"
-	goPrinterOperators "$compGroup" "$pList" "$spaces"
-	goPrinterAdmin "$compGroup" "$pList" "$spaces"
-	setupPrinters "$compGroup" "$pList" "$pConfig" "$spaces"
 	vecho "${spaces}[start] done."
-	closeLog "$log_tag" "$spaces"
 }
 
 #---------
 # Main
 #---------
-# run as root
-#if [ “$(id -u)” != “0” ]; then
-#   echo “This script must be run as root” 2>&1
-#   exit 1
-#fi
-
+#run as root
+if [ “$(id -u)” != “0” ]; then printf "$sname must be run as root.\n"; exit 1; fi
+initialLog "$log_tag"
 options=""
-for i in "$@"
-do
+for i in "$@"; do
 	case $i in
-		-h|--help|-\?)
-		echo "$usage"
-		exit
-		;;
-		-v|--verbose)
-		Verbose=true
-		shift
-		;;
-		--config|-c)
-		options="-c"
-		shift
-		;;
-		--list|-l)
-		options="-l"
-		shift
-		;;
-		*)
-		if [ "$options" = "-c" ]; then
-			pConfig="$i"
-		fi
-		if [ "$options" = "-l" ]; then
-			pList="$i"
-		fi
-		;;
+		-h|--help|-\?) printf "$usage\n"; 	exit;  ;;
+		-v|--verbose)	Verbose=true; 		shift; ;;
+		--config|-c)	options="-c";		shift; ;;
+		--list|-l)		options="-l";		shift; ;;
+		*)	if [ "$options" = "-c" ]; then pConfig="$i";	fi;
+			if [ "$options" = "-l" ]; then pList="$i";	fi;	;;
 	esac
 done
-if [ "$pConfig" != "" ] && [ "$pList" != "" ]; then
-   start
-else
-	echo "$usage"
-fi
+#echo "pConfig=$pConfig", "pList=$pList"
+if [ -f "$pConfig" ] && [ -f "$pList" ]; then start; else printf "$usage\n"; fi;
+closeLog "$log_tag" "$spaces"
 exit 0

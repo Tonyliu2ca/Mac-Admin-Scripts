@@ -13,16 +13,18 @@
 			<array>
 				<dict>
 					<key>group</key>
-					<string>user</string>
+					<string>group</string>
 					<key>member</key>
-					<string>cbeaccount</string>
+					<string>Administrator</string>
 				</dict>
 			</array>
 			<key>PrinterList</key>
 			<array>
-				<string>P404COL1</string>
-				<string>P404MFP2</string>
-				<string>P404MFP1</string>
+				<string>P379LIB2</string>
+				<string>P379RM12</string>
+				<string>P379OFF2</string>
+				<string>P379MFP2</string>
+				<string>P379MFP3</string>
 			</array>
 			<key>PrinterOperator</key>
 			<array>
@@ -30,58 +32,28 @@
 					<key>group</key>
 					<string>group</string>
 					<key>member</key>
-					<string>CBEORG\Domain Users</string>
+					<string>students</string>
+				</dict>
+				<dict>
+					<key>group</key>
+					<string>group</string>
+					<key>member</key>
+					<string>teachers</string>
 				</dict>
 			</array>
 			<key>RemovePrinterList</key>
 			<array>
 				<dict>
+					<key>Compare</key>
+					<string>=</string>
 					<key>Name</key>
-					<string>P404OFF1</string>
+					<string>null</string>
 					<key>Type</key>
-					<string>Description</string>
-				</dict>
-				<dict>
-					<key>Name</key>
-					<string>mcx</string>
-					<key>Type</key>
-					<string>DeviceName</string>
-				</dict>
-				<dict>
-					<key>Name</key>
-					<string>dnns</string>
-					<key>Type</key>
-					<string>Protocol</string>
+					<string>protocol</string>
 				</dict>
 			</array>
-			<key>removeOD</key>
+			<key>everyone</key>
 			<true/>
-			<key>resetCUPS</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>ComputerID</key>
-			<string>Office</string>
-			<key>Default</key>
-			<false/>
-			<key>PrinterList</key>
-			<array>
-				<string>P404MFP2</string>
-				<string>P404OFF1</string>
-				<string>P404MFP1</string>
-				<string>P404COL1</string>
-			</array>
-			<key>PrinterOperator</key>
-			<array>
-				<dict>
-					<key>group</key>
-					<string>group</string>
-					<key>member</key>
-					<string>CBEORG\Domain Users</string>
-				</dict>
-			</array>
-			<key>RemovePrinterList</key>
-			<array/>
 			<key>removeOD</key>
 			<true/>
 			<key>resetCUPS</key>
@@ -92,6 +64,8 @@
 			<string>_DEFAULT_</string>
 			<key>Default</key>
 			<true/>
+			<key>PrinterAdmin</key>
+			<array/>
 			<key>PrinterList</key>
 			<array/>
 			<key>PrinterOperator</key>
@@ -100,17 +74,11 @@
 					<key>group</key>
 					<string>group</string>
 					<key>member</key>
-					<string>CBEORG\Domain Users</string>
-				</dict>
-				<dict>
-					<key>group</key>
-					<string>group</string>
-					<key>member</key>
-					<string>CBEEDU\Domain Users</string>
+					<string>Administrators</string>
 				</dict>
 			</array>
-			<key>RemovePrinterList</key>
-			<array/>
+			<key>everyone</key>
+			<false/>
 			<key>removeOD</key>
 			<false/>
 			<key>resetCUPS</key>
@@ -124,6 +92,6 @@
 	<key>log_file</key>
 	<string>/var/log/installPrinters.log</string>
 	<key>log_tag</key>
-	<string>Install_Printers_379_Teachers</string>
+	<string>setnprn_Printers</string>
 </dict>
 </plist>
