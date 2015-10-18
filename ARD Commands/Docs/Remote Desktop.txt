@@ -1,0 +1,45 @@
+
+Remote Desktop Directories:
+Version before 3.6.x (?)
+	~/Library/Application\ Support/Remote\ Desktop/
+		Presets/
+			CopyItemsTask.plist
+			InstallPackageTask.plist
+			SysInfoReportTaks.plist
+			UnixCommandTask.plist
+		Server Tasks/
+			serverTasks.plist
+		Task\ History/
+			2015-10-10.plist
+		Task\ Manager/
+			taskManager.plist
+
+Version after 3.7.x (?)
+	Sandbox locations:
+		~/Library/Saved\ Application\ State/com.apple.RemoteDesktop.saveState (link to)
+		~/Library/Containers/com.apple.RemoteDesktop/Data/Library/
+			Application\ Support/Remote\ Desktop/
+				Presets/
+					CopyItemsTask.plist
+					InstallPackageTask.plist
+					SysInfoReportTaks.plist
+					UnixCommandTask.plist
+				Presets\ copy/
+					(copy from old version)
+				Server Tasks/
+					serverTasks.plist
+				Task\ History/
+					2015-10-10.plist
+				Task\ Manager/
+					taskManager.plist
+
+How to remove Remote Desktop:
+	Apple HT201766 (https://support.apple.com/en-ca/HT201766)
+
+	sudo rm -rf /var/db/RemoteManagement  
+	sudo rm /Library/Preferences/com.apple.RemoteDesktop.plist  
+	rm ~/Library/Preferences/com.apple.RemoteDesktop.plist
+	sudo rm -r /Library/Application\ Support/Apple/Remote\ Desktop/ 
+
+	rm -r ~/Library/Application\ Support/Remote\ Desktop/
+	rm -r ~/Library/Containers/com.apple.RemoteDesktop

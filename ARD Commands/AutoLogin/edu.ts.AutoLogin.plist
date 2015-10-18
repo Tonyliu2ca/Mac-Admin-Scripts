@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Minute</key>
+		<integer>54</integer>
+		<key>Hour</key>
+		<integer>9</integer>
+	</dict>
+	<key>UserName</key>
+	<string>root</string>
+	<key>Label</key>
+	<string>edu.ts.AutoLogin</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Library/Updates/AutoLogin.sh</string>
+	</array>
+	<key>LaunchOnlyOnce</key>
+	<false/>
+	<key>RunAtLoad</key>
+	<false/>
+	<key>ServiceDescription</key>
+	<string>Auto Login Test</string>
+</dict>
+</plist>
