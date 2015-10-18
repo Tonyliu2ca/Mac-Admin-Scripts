@@ -1,7 +1,7 @@
 # ------------------------------
 # setup printer scripts
 # script name: setNPrn.sh
-
+#
 # version 2.1
 #    
 # ------------------------------
