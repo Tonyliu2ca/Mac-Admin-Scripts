@@ -18,9 +18,19 @@
 #    Run this script with root privilege.
 #    This' tested on 10.10.3 only.
 #
-# Version 1.0
+# Version 1.1
 # Tony Liu, 2015
 #
+# History:
+#   2015-10-20: added version detection
+#
+
+osver=$(sw_vers -productVersion)
+
+if [ "$osver" != "10.10.3" ]; then
+   printf "Current OS is NOT 10.10.3, will quit without any changes."
+   exit 1
+fi
 
 defaults read /System/Library/LaunchAgents/com.apple.cloudd.plist
 
@@ -28,9 +38,12 @@ if [ -f "/System/Library/LaunchAgents/com.apple.cloudd.plist" ]; then
    defaults write /System/Library/LaunchAgents/com.apple.cloudd.plist Diabled -bool True
    chmod +r /System/Library/LaunchAgents/com.apple.cloudd.plist
    chown root:wheel /System/Library/LaunchAgents/com.apple.cloudd.plist
+   # launchctl unload -wF /System/Library/LaunchAgents/com.apple.cloudd.plist
 fi
 
 defaults read /System/Library/LaunchAgents/com.apple.cloudd.plist
+
+printf "Current OS is 10.10.3, disabled iCloudd, please restart your machine."
 
 # ----------------------------------
 # For recovering to system default:
@@ -38,3 +51,5 @@ defaults read /System/Library/LaunchAgents/com.apple.cloudd.plist
 # chmod +r /System/Library/LaunchAgents/com.apple.cloudd.plist
 # chown root:wheel /System/Library/LaunchAgents/com.apple.cloudd.plist
 #
+
+exit 0
