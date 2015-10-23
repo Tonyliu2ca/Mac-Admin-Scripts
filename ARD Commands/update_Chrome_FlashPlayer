@@ -1,9 +1,41 @@
 #!/bin/sh
 
 #
+# ---------------------------------------------------------------------
+# update to the most current Google Chrome browser and/or Flash Player
 #
+# DESCTIPTION:
+#   If you org doesn't have a automatic updating policy setup, or you
+#   would like to take the control of it, or whatever reason, try this.
+#   It download the most current installation package from their offcial
+#   home website, unpack it and install or copy it over.
+#   For Google Chrome, it copies to /Application folder, so it's better
+#   to quit any running Chrome instance.
+#   For Flahs Player, user may have to close and relaunch Safari to
+#   got it catch up the update.
 #
+#   How to use?
+#      please read the online readme, just fire it with -h option.
+#   Examples:
+#      $ update_chrom_Flashplay.sh -h
+#      Get the online help/readme
+#      $ update_chrom_Flashplay.sh -a
+#      Update both of them
+#      $ update_chrom_Flashplay.sh -i chrome
+#      Update Google Chrome only
+#      $ update_chrom_Flashplay.sh -i flash
+#      Update Flahs Player only
 #
+# HISTORY:
+#   2015-10-10: Initial
+#   2015-10-23: comments update
+#
+# Note/Causion:
+#    Run this script with root privilege.
+#    The download link coud be changed anytime
+#
+# Version 1.1
+# Tony Liu, 2015
 #
 
 # ---------------------------
