@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Retrieve printer setup options for a specific printer.
+# Retrieve printer setup options from a specific printer.
 # Return:
 #   Manufacturer: HP | Xerox
 #   Driver: 
