@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# ------------------------------------------------------------------------------------
+# postinstall.sh
+#
+# Purpose:
+#    noSleep4EncryptionDone installation payload free package postinstall script.
+#
+# How to use:
+#    put together with noSleep4EncryptionDone script.
+#
+# History:
+#    2017-05-31: create payload free package
+#
+# ------------------------------------------------------------------------------------
+# Tony Liu, TonyLiu2ca@yahoo.com
+# ------------------------------------------------------------------------------------
+program="noSleep4Encryption"
+
+#touch /var/log/noSleep4Encryption.log
+#echo "0=$0, 1=$1, 2=$2, 3=$3, 4=$4" >> /var/log/noSleep4Encryption.log
+#echo $(pwd) >> /var/log/noSleep4Encryption.log
+./"$program" "INITIAL"
+
+exit 0

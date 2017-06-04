@@ -1,0 +1,4 @@
+sudo -s
+env EDITOR=nano crontab -e
+
+edit, save and restart
