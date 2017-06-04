@@ -27,18 +27,22 @@ What to mke it happen:
   far it works perfect.
 
 Monitor:
+========
   check the log file (default saved in /var/log/noSleep4EncryptionDone.log)
   "pmset -g" command to check the current power management status
 
 Cleanup:
+========
   remove files: com.github.tonyliu2ca.noSleep4EncryptionDone.plist, noSleep4EncryptionDone neverSleep and crontab file,
   if needed remve the log file as well to fully remove all footprints.
 
 How to use:
+===========
 
 
 
 License:
+========
     noSleep4EncryptionDone
     Copyright (C) 2017  Tony Liu
 
