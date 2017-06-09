@@ -36,16 +36,25 @@ How to pack:
 
 How to use:
 ===========
+Modify the script
+-----------------
+You may find the viriables at the beginning of the script. The following are parameters are OK to be modified to suit in your environments.
+`iniString` and `fullCLEANUP` are string defined script arguments, that pass to the script to do specific works, Initialize or cleanup.
+`program` the name of the main script, it doesn't have to be the same as the one in your installation package. this is the main 
+`identity` is used for the launchd idendity, can be changed.
+`logFile` can be anywhere you want to
+`nonestopDelayDefault` default to run the script every 5 minutes (300 seconds). 
+`restartTime` is set to the hour that can do a restart after encryption is done.
+
 
 Monitor:
 ========
-  check the log file (default saved in /var/log/noSleep4EncryptionDone.log)
+  check the log file (default location is /var/log/noSleep4EncryptionDone.log)
   "pmset -g" command to check the current power management status
 
 
-
 Potential issue:
-===========
+================
    Issue: caffeinate prevent the system from sleeping assertion only works when the machine is running on AC power. it's common to reimage it some where and then unplug power cord and/or close lid for a while to take it to a cart, slid it in a slot and plug it back in. During this time of period, system may go to sleep, and this may break our approuch.
    Answer: Upon test, make sure let it go to sleep, you can tell from the breath led light, ping to it or just wait longer, once it's plugged in, it bring the system to a state wakeup and caffeinate assertion takes effect to prevent it go back to sleep again.
 
