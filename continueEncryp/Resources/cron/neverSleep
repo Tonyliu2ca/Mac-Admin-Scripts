@@ -1,4 +1,0 @@
-#!/bin/bash
-
-echo "$(date) - neverSleep started." >> /Users/cbeaccount/Desktop/neverSleep.log
-/usr/bin/nohup /usr/bin/caffeinate -ismu -w 1 </dev/null >/dev/null 2>&1 & disown
