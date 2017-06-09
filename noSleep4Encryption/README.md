@@ -1,20 +1,20 @@
 Why need it:
 ============
-   In my production environment, using Dell Data Protection software to encrypt macOS whole drive instead of FileVault 2. One of the thing we find out is that the whole system perfermence is slow while it's encrypting, it comes back to normal once the encryption is done.
+   In my production environment, Dell Data Protection software is the critical technology used to encrypt macOS whole drive instead of FileVault 2, it has a version works on the PC side as well. One of the thing we find out is that the whole system perfermence is slow while it's encrypting, it comes back to normal once the encryption is done. This seem only Mac thing so far.
    
-   Once a Mac is reimaged, the encryption software installation is kicked in as a globle enterprise policy enforced by Jamf. With current DDP client version 8.9.x and 8.11.x, have to log in twice to get the encryption process started, the first stage modifies partition and sync to central certification escrow server. After a restart, another login starts encrypting. Once encryption starts, no other user action is needed.
+   Once a Mac is reimaged or jamf first enrollment is done, the encryption software installation is kicked in as a globle enterprise policy enforced by Jamf system. With current DDP client version 8.9.x and 8.11.x, we have to log in twice to get the encryption process started, the first stage modifies partition and sync to central certification escrow server. After a restart, another login needs to fire up the encryption. Once the encryption starts, no other furhter user action is needed.
    
-   Then encryption may take more than 12 hours on a 500GB HDD approximately. So it's better to power on the Mac and let it continue running until the encryption is done over night.
+   The encryption may take more than 12 hours on a 500GB HDD approximately. So it's better to power on the Mac and let it continue running until the encryption is done over night.
    
-   The most of Mac laptops are stored in laptop carts and the moden cart slots may not have enough space to leave the Mac laptop lid open. Once lid is closed, the laptop goes to sleep and the encryption is suspended until the next time the system is woke up.
+   The most of Mac laptops are stored in laptop carts, the moden cart slots may not have enough space to leave the Mac laptop lid open while laptop inside a slot. Once lid is closed, the laptop goes to sleep and the encryption is suspended until the next time the system is woke up.
 
-   So it's needed to keey a Mac up and running even when lid is closed and the program can stop, clean up itself once the encryption done, and leave the logs for audit.
+   So we need to keep a Mac up and running even when lid is closed and the program can stop, clean up itself once the encryption done, and leave the logs for audit.
 
 What to make it happen:
 =====================
-   macOS power management assertion is one of the way to prevent a Mac goes to sleep. This is the core technology used. For Xcode or swift developer, believe their's a way to do the same thing as caffeinate does. As an admin with script knowledge, caffeinate command is preferred.
+   macOS power management assertion is one way to prevent a Mac from going to sleep, ie. caffeinate command. This is the core technology. For Xcode or swift developer, believe they have more powerful way to do the same thing what caffeinate does. As an admin with script knowledge, caffeinate command is preferred.
   
-  Launchd is used to make a period launch daemons to check system status chang, log all stats and reports, and even self clean-up. crontab should do the same job.
+  Launchd is used to make a period launch daemons to check system status chang, log all stats and reports, and even self clean-up. crontab could do the same job by the way.
   
   Cron is also used to run caffeinate command to deal with system restarts. Ipon the test on macOS 10.12.4, launchd doesn't support disown and/or nohup. So far cron job works perfect.
 
