@@ -10,7 +10,7 @@ Why need it:
 
    So we need to keep a Mac up and running even when lid is closed and the program can stop, clean up itself once the encryption done, and leave the logs for audit.
 
-What to make it happen:
+What make it happen:
 =====================
    macOS power management assertion is one way to prevent a Mac from going to sleep, ie. caffeinate command. This is the core technology. For Xcode or swift developer, believe they have more powerful way to do the same thing what caffeinate does. As an admin with script knowledge, caffeinate command is preferred.
   
