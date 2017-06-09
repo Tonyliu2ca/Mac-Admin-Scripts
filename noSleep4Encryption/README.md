@@ -10,7 +10,7 @@ Why need it:
 
    So it's needed to keey a Mac up and running even when lid is closed and the program can stop, clean up itself once the encryption done, and leave the logs for audit.
 
-What to mke it happen:
+What to make it happen:
 =====================
    macOS power management assertion is one of the way to prevent a Mac goes to sleep. This is the core technology used. For Xcode or swift developer, believe their's a way to do the same thing as caffeinate does. As an admin with script knowledge, caffeinate command is preferred.
   
@@ -18,18 +18,30 @@ What to mke it happen:
   
   Cron is also used to run caffeinate command to deal with system restarts. Ipon the test on macOS 10.12.4, launchd doesn't support disown and/or nohup. So far cron job works perfect.
 
+How it works
+============
+Startup
+-------
+
+Run periodically
+----------------
+
+Cleanup:
+--------
+  remove files: com.github.tonyliu2ca.noSleep4EncryptionDone.plist, noSleep4EncryptionDone neverSleep and crontab file,
+  if needed, remove the log file as well to fully remove all footprints.
+
+How to pack:
+===========
+
+How to use:
+===========
+
 Monitor:
 ========
   check the log file (default saved in /var/log/noSleep4EncryptionDone.log)
   "pmset -g" command to check the current power management status
 
-Cleanup:
-========
-  remove files: com.github.tonyliu2ca.noSleep4EncryptionDone.plist, noSleep4EncryptionDone neverSleep and crontab file,
-  if needed, remove the log file as well to fully remove all footprints.
-
-How to use:
-===========
 
 
 Potential issue:
