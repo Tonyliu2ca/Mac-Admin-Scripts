@@ -31,11 +31,11 @@ Cleanup:
   remove files: com.github.tonyliu2ca.noSleep4EncryptionDone.plist, noSleep4EncryptionDone neverSleep and crontab file,
   if needed, remove the log file as well to fully remove all footprints.
 
-How to pack:
-===========
 
 How to use:
 ===========
+The main script can even be run or called invividually anytime you want. all the others are for building a installation package.
+
 Modify the script
 -----------------
 You may find the viriables at the beginning of the script. The following are parameters are OK to be modified to suit in your environments.
@@ -48,10 +48,12 @@ You may find the viriables at the beginning of the script. The following are par
 
 + `logFile` can be anywhere you want to
 
-.. `nonestopDelayDefault` default to run the script every 5 minutes (300 seconds). 
++ `nonestopDelayDefault` default to run the script every 5 minutes (300 seconds). 
 
-.. `restartTime` is set to the hour that can do a restart after encryption is done.
++ `restartTime` is set to the hour that can do a restart after encryption is done.
 
+How to pack:
+------------
 
 Monitor:
 ========
