@@ -72,14 +72,16 @@ It's a payload free package.
 
 Monitor:
 ========
-  check the log file (default location is /var/log/noSleep4EncryptionDone.log)
-  "pmset -g" command to check the current power management status
+   check the log file (default location is /var/log/noSleep4EncryptionDone.log)
+
+   "pmset -g" command to check the current power management status
 
 
 Potential issue:
 ================
-   `Issue`: caffeinate prevent the system from sleeping assertion only works when the machine is running on AC power. it's common to reimage it some where and then unplug power cord and/or close lid for a while to take it to a cart, slid it in a slot and plug it back in. During this time of period, system may go to sleep, and this may break our approuch.
-   +`Answer`: Upon test, make sure let it go to sleep, you can tell from the breath led light, ping to it or just wait longer, once it's plugged in, it bring the system to a state wakeup and caffeinate assertion takes effect to prevent it go back to sleep again.
+`Issue`: caffeinate prevent the system from sleeping assertion only works when the machine is running on AC power. it's common to reimage it some where and then unplug power cord and/or close lid for a while to take it to a cart, slid it in a slot and plug it back in. During this time of period, system may go to sleep, and this may break our approuch.
+
+. `Answer`: Upon test, make sure let it go to sleep, you can tell from the breath led light, ping to it or just wait longer, once it's plugged in, it bring the system to a state wakeup and caffeinate assertion takes effect to prevent it go back to sleep again.
 
 
 License:
