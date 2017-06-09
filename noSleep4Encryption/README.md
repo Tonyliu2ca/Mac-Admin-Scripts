@@ -40,13 +40,13 @@ Modify the script
 -----------------
 You may find the viriables at the beginning of the script. The following are parameters are OK to be modified to suit in your environments.
 
-.. `iniString` and `fullCLEANUP` are string defined script arguments, that pass to the script to do specific works, Initialize or cleanup.
+- `iniString` and `fullCLEANUP` are string defined script arguments, that pass to the script to do specific works, Initialize or cleanup.
 
-.. `program` the name of the main script, it doesn't have to be the same as the one in your installation package. this is the main 
+* `program` the name of the main script, it doesn't have to be the same as the one in your installation package. this is the main 
 
-... `identity` is used for the launchd idendity, can be changed.
+- `identity` is used for the launchd idendity, can be changed.
 
-.. `logFile` can be anywhere you want to
++ `logFile` can be anywhere you want to
 
 .. `nonestopDelayDefault` default to run the script every 5 minutes (300 seconds). 
 
