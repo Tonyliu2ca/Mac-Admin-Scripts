@@ -20,17 +20,28 @@ What make it happen:
 
 How it works
 ============
+the main scripts file is `noSleep4EncryptionDone`.
+
 Startup
 -------
+Setup itself by call the main script with "INITIAL" as the first argument to the script. It copys itself and neverSleep scrpt to /usr/local/bin, creates launchd plist in /Library/LaunchDaemons/, and creates root user crontab in /usr/lib/cron/root.
 
-Run periodically
-----------------
+After initialization, all are controlled by macOS system, launchd and cron (cron is controled by launchd as well).
+every restart or power on, it runs root crontab job and it stays in memory and continue prevent system from sleep.
+every couple (default is 5) minutes, launchd run the main script to reset power management settings to make sure it up and running.
 
-Cleanup:
---------
-  remove files: com.github.tonyliu2ca.noSleep4EncryptionDone.plist, noSleep4EncryptionDone neverSleep and crontab file,
-  if needed, remove the log file as well to fully remove all footprints.
+Run periodically:
+-----------------
+the launchd plist file has the startinterval set, to let launchd know to rerun it every * seconds. 
+If you want you may want to use cron to get it go the same way. It's not to hard to be implemented and easier for some people. Here we prefer the king of OSX method.
 
+Stop and Cleanup:
+-----------------
+   Once it finds out the encryption is done, it will try to restart and start the cleanup process.
+
+   Clean up is removing the initialized files:  launchd plist, noSleep4EncryptionDone, neverSleep and crontab file.
+
+   If needed, remove the log file as well to fully remove all footprints.
 
 How to use:
 ===========
@@ -54,6 +65,10 @@ You may find the viriables at the beginning of the script. The following are par
 
 How to pack:
 ------------
+We have a script file to make a package, createPackage.sh.
+or download a built package file: [noSleep4Encryption.pkg](https://github.com/Tonyliu2ca/Mac-Admin-Scripts/blob/master/noSleep4Encryption/noSleep4Encryption.Package/noSleep4Encryption.pkg)
+
+It's a payload free package.
 
 Monitor:
 ========
@@ -63,8 +78,8 @@ Monitor:
 
 Potential issue:
 ================
-   Issue: caffeinate prevent the system from sleeping assertion only works when the machine is running on AC power. it's common to reimage it some where and then unplug power cord and/or close lid for a while to take it to a cart, slid it in a slot and plug it back in. During this time of period, system may go to sleep, and this may break our approuch.
-   Answer: Upon test, make sure let it go to sleep, you can tell from the breath led light, ping to it or just wait longer, once it's plugged in, it bring the system to a state wakeup and caffeinate assertion takes effect to prevent it go back to sleep again.
+   `Issue`: caffeinate prevent the system from sleeping assertion only works when the machine is running on AC power. it's common to reimage it some where and then unplug power cord and/or close lid for a while to take it to a cart, slid it in a slot and plug it back in. During this time of period, system may go to sleep, and this may break our approuch.
+   +`Answer`: Upon test, make sure let it go to sleep, you can tell from the breath led light, ping to it or just wait longer, once it's plugged in, it bring the system to a state wakeup and caffeinate assertion takes effect to prevent it go back to sleep again.
 
 
 License:
