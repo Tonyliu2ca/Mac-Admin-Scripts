@@ -38,6 +38,7 @@
 #          defaults read /Library/LaunchDaemons/com.github.tonyliu2ca.noSleep4Encryption.plist
 #
 # History:
+#   2017-10-23: more robust DDPE client program existence test to support new DDPE version.
 #   2017-05-04: prototype, version 0.1
 #   2017-05-10: version = 1.0
 #   2017-06-01: Add %1 for initialize
@@ -166,9 +167,9 @@ canStop()
 {
    mylog "canStop: ..."
    condition="No"; iReturn=1
-#   return $iReturn
-   if [ -f /Library/PreferencePanes/Dell\ Data\ Protection.prefPane/Contents/Helpers/client ]; then 
-      percentDone=$(/Library/PreferencePanes/Dell\ Data\ Protection.prefPane/Contents/Helpers/client -d 2>&1 | grep PercentDone | awk '{ print $3}'  | head -n 1)
+   prefPaneName=$(ls -td /Library/PreferencePanes/Dell* 2>/dev/null | sed -n 1p)
+   if [ -f "$prefPaneName/Contents/Helpers/client" ]; then 
+      percentDone=$("$prefPaneName/Contents/Helpers/client" -d 2>&1 | grep PercentDone | awk '{ print $3}'  | head -n 1)
       mylog "canStop: percentDone=[$percentDone]"
       [[ "$percentDone" = "1;" ]] && { condition="Yes"; iReturn=0; }
    else
