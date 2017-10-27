@@ -10,15 +10,17 @@
 #    Tony Liu, 2017-09-14
 #
 # History:
-#    ver 1.0.1: 2017-09-18
-#       first release
+#    ver 1.0.3: 2017-10-20
+#       add more DDPE client middle condiftions.
 #    ver 1.0.2: 2017-09-19
 #       deal with two different version of client software situations.
+#    ver 1.0.1: 2017-09-18
+#       first release
 # ----------------------------------------------------------------------------------------
 
 WasEncryptionInstalled=`pkgutil --pkgs| grep com.dell.ems.`
 WasEncryptionInstalled1=`pkgutil --pkgs| grep Encryption`
-prefPaneName=`ls -td /Library/PreferencePanes/Dell* | sed -n 1p`
+prefPaneName=$(ls -td /Library/PreferencePanes/Dell* 2>/dev/null | sed -n 1p)
 tempPlist="/tmp/DDPE_status__9_9.plist"
 
 # ------------------------------------------------
@@ -31,6 +33,11 @@ echo $(system_profiler SPSoftwareDataType | grep "System Version" |awk -F ":" '{
 # ------------------------------------------------
 if [ -n "$WasEncryptionInstalled" ] || [ -n "$WasEncryptionInstalled1" ]
 then echo "Installation: Yes"; else echo "Installation: No"; exit 1; fi;
+
+# ------------------------------------------------
+# trigger ddpe_fixexcluded to start installation
+# /usr/local/jamf/bin/jamf policy -trigger ddpe_fixexcluded
+# ------------------------------------------------
 
 # ------------------------------------------------
 # version compare:
@@ -89,9 +96,18 @@ verComp $ddpeVersion "8.6.1" &>-
 # ---------------------------------------------------------
 "$prefPaneName"/Contents/Helpers/client -d -plist > "$tempPlist" 2> /dev/null
 
-/usr/libexec/Plistbuddy -c "print :disk0s2:policies:0" "$tempPlist" &> /dev/null
-[ "$?" -ne "0" ] && { echo "Error: client return unknown info."; exit 4; }
+# client returns no plist file.
+[ ! -e "$tempPlist" ] && { echo " Warning: Unknown condition, try to log back in."; exit 4; }
 
+# client return plist file and adminKetStatus=filePresent, need to restart after repartition done.
+adminKeyStatus=$(/usr/libexec/Plistbuddy -c "print :disk0s2:adminKeyStatus" "$tempPlist" 2> /dev/null)
+[ "$adminKeyStatus" = "filePresent" ] && { echo " Encryption Status: restart and log in to start encryption."; exit 5; }
+
+# client return plist file but no statusText, means it's installing or log off and log in to trigger installation.
+/usr/libexec/Plistbuddy -c "print :disk0s2:statusText" "$tempPlist" &> /dev/null
+[ "$?" -ne "0" ] && { echo " Warning: Waiting for initializing. you may want to log back in."; exit 6; }
+
+# client return plist file and adminKetStatus!=filePresent. Encryption is started.
 percentDone=$(/usr/libexec/Plistbuddy -c "print :disk0s2:policies:0:PercentDone" "$tempPlist" 2> /dev/null)
 percentDone=$(echo "$percentDone*100" | bc); percentDone=${percentDone%.*}
 StatusEncryption=$(/usr/libexec/Plistbuddy -c "print :disk0s2:statusText" "$tempPlist" 2> /dev/null)
@@ -119,3 +135,5 @@ else
 fi
 echo " Detail Status: $currentGB GB of $totalGB GB ($percent% finished)"
 rm "$tempPlist"
+exit 0
+
