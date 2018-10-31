@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+
+# 
+# dshasum
+# approach to caculate a folder/directory SHA checksums
+#
+# 
+# Usage info
+show_help() {
+cat << EOF
+Directory SHA checksum (dshasum): One approach to caculate a folder/directory SHA checksums
+Tony Liu, 2018-19 version 1.0.1
+   
+Usage: $(basename $0) -[h|?|v] [-f algorithm] [-p algorithm] [-t cheksum] path ...
+
+      path           A full path of a directory
+      -p algorithm   Path checksum algorithm, default=1
+                     Valide shasum algorithm option, 1(default), 224, 256, 384, 512, 512224, 512256
+      -f algorithm   files inside path checksum algorithm
+                     default: equal to -a option
+      -h|-?          Show this help
+      -v             Verbose mode, which is good for debuging
+      -t             [not implemented in this version]
+
+Examples:
+      $(basename $0) -p 256 /var/root
+      $(basename $0) -p 256 -f 1 /var/root
+      $(basename $0) -vp 224 /var/root
+EOF
+}
+
+printInfo()
+{
+   [[ $verbose -eq 1 ]] && echo "$1"
+}
+
+#
+# allFileShasum()
+# Get checksum of all files in a directory 
+# Input: <Directory>, <Algorithm>
+# Output: formatted file shasum strings in order 
+# Return:
+#    0 = Caculate folder OK
+#    1 = Caculate one file OK
+#  251 = Not a folder or file, or no access to it
+#  252 = access Folder error
+#  253 = access file error
+#
+allFileShasum()
+{
+   path="$1"
+   opt="$2"
+
+   [[ -z "${opt// }" ]] && opt="1"
+   # -----------
+   if [[ -f "$path" ]]; then
+      if sum=$(/usr/bin/shasum -a $opt "$each"); then
+         echo "$sum"
+         return 1
+      else
+         return 253
+      fi
+   fi
+   # -----------
+   [[ -d "$path" ]] || return 251;
+
+   curPath=$(pwd)
+   cd "$path" || return 252
+   filelist=" - [Directory-Hash]"
+   IFS=$'\n'
+   NL=$'\n'
+   for each in $(/usr/bin/find -xd * -type f -not -name ".DS_Store" | sort); do
+      if sum=$(/usr/bin/shasum -a $opt "$each"); then
+         filelist="$filelist${NL}- $sum"
+      else
+         return 253
+      fi
+   done
+   echo "$filelist"
+   cd "$curPath"
+}
+
+#
+# pathShasum()
+# Caculate shasum base on the $1 string
+# Input: <String> <Algorithm>
+# Output: shasum string
+# Return: 0
+#
+pathShasum()
+{
+   opt="$2"
+   [[ -z "${opt// }" ]] && opt="1"
+   echo -n "$1" | /usr/bin/shasum -a $opt | /usr/bin/awk '{print $1}'
+   return 0
+}
+
+# Initialize our own variables:
+verbose=0
+path=""
+pathAlg="1"
+fileAlg=""
+
+#-------------------------------------------------------------
+# read the options
+OPTIND=1         # Reset in case getopts has been used previously in the shell.
+while getopts "h?vp:f:t:" opt; do
+   case "$opt" in
+   h|\?) show_help; exit 1 ;;
+   v)  verbose=1 ;;
+   p)  pathAlg="$OPTARG" ;;
+   f)  fileAlg="$OPTARG" ;;
+   t)  checkString="$OPTARG" ;; 
+   esac
+done
+[ -z "$fileAlg" ] &&  fileAlg="$pathAlg"
+#-------------------------------------------------------------
+# process the rest Path ... arguments
+shift $((OPTIND-1)); [ "${1:-}" = "--" ] && shift
+printInfo "Verbose=$verbose, Path Algorithm=$pathAlg, File Algorithm=$fileAlg, CheckString=$checkString, Path=$*"
+
+while [[ $# -gt 0 ]]; do
+   eachPath="$1"
+   printInfo "Start process path=$1"
+   [ -d "$eachPath" ] || { echo "Error: access $eachPath"; exit 250; }
+   check=$(allFileShasum "$eachPath" "$fileAlg")
+   [[ "$?" != "0" ]] && { echo "Error: file shasum return $?."; exit 250; }
+   printInfo "$check"
+   check=$(pathShasum "$check" "$pathAlg")
+   echo "$check, $eachPath"
+   shift
+done
+exit 0
