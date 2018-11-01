@@ -8,7 +8,7 @@
 # Usage info
 show_help() {
 cat << EOF
-Directory SHA checksum (dshasum): One approach to caculate a folder/directory SHA checksums
+Directory SHA checksum (dshasum): Approach to caculate a folder/directory SHA checksums
 Tony Liu, 2018-19 version 1.0.1
    
 Usage: $(basename $0) -[h|?|v] [-f algorithm] [-p algorithm] [-t cheksum] path ...
@@ -17,13 +17,13 @@ Usage: $(basename $0) -[h|?|v] [-f algorithm] [-p algorithm] [-t cheksum] path .
       -p algorithm   Path checksum algorithm, default=1
                      Valide shasum algorithm option, 1(default), 224, 256, 384, 512, 512224, 512256
       -f algorithm   files inside path checksum algorithm
-                     default: equal to -a option
+                     default: equal to -p option
       -h|-?          Show this help
       -v             Verbose mode, which is good for debuging
       -t             [not implemented in this version]
 
 Examples:
-      $(basename $0) -p 256 /var/root
+      $(basename $0) -p 256 /var/root /bin
       $(basename $0) -p 256 -f 1 /var/root
       $(basename $0) -vp 224 /var/root
 EOF
