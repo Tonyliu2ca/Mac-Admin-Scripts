@@ -55,25 +55,16 @@ userPWDlog="/tmp/nochgUserPWD.log"
 
 echo "------- $(date) ($sUserID) -------"  >> "$userPWDlog"
 
-#sUserPWDTime="accountPolicyData"
 sUserHashPWD="ShadowHashData"
 sUserShell="UserShell"
-#sUserInitPWDTime="${sUserPWDTime}_Initial"
 sUserInitHashPWD="${sUserHashPWD}_Initial"
 sUserInitShell="${sUserShell}_Initial"
+#sUserPWDTime="accountPolicyData"
+#sUserInitPWDTime="${sUserPWDTime}_Initial"
 
-#readUserPWDTime () { 
-#  dscl . -read /users/"$sUserID" accountPolicyData  | tail -n +2 > /tmp/accountPolicyData.plist 
-#  defaults read /tmp/accountPolicyData.plist passwordLastSetTime
-#}
-#readUserInitPWDTime () { dscl . -read /users/"$sUserID" "$sUserInitPWDTime"; }
-# readUserShell   () { dscl . -read /Users/"$sUserID" "$sUserShell" | awk '{ print $2}'; }
-# readUserInitShell   () { dscl . -read /Users/"$sUserID" "$sUserInitShell"; }
 readUserShell   () { dscl . -read /Users/"$sUserID" "$1" | awk '{ print $2}'; }
 writeUserShell  () { dscl . -create /users/"$sUserID" "$1" "$2"; }
 
-# readUserHashPWD () { defaults read /var/db/dslocal/nodes/Default/users/"$sUserID".plist "$sUserHashPWD"; }
-#readUserInitHashPWD () { defaults read /var/db/dslocal/nodes/Default/users/"$sUserID".plist "$sUserInitHashPWD"; }
 readUserHashPWD () { defaults read /var/db/dslocal/nodes/Default/users/"$sUserID".plist "$1"; }
 writeUserPWD () { defaults write /var/db/dslocal/nodes/Default/users/"$sUserID".plist "$1" "$2"; }
 
@@ -82,9 +73,7 @@ initialUserStatus () {
    initPWD=$(readUserHashPWD "$sUserInitHashPWD" 2>/dev/null)
    if [[ "$initPWD" = "" ]]; then
       echo "  -initializing: ($sUserInitHashPWD)" >> "$userPWDlog"
-#      userPWDTime=$(readUserPWDTime)
       uPWD=$(readUserHashPWD "$sUserHashPWD")
-#      userShell=$(readUserShell "$sUserShell")
       echo "   - uPWD=$uPWD;" >> "$userPWDlog"
       writeUserPWD "$sUserInitHashPWD" "$uPWD"
       # writeUserShell "sUserInitShell" "$userShell"
@@ -109,13 +98,10 @@ restoreStatus () {
    echo " -restoreUserStatus" >> "$userPWDlog"
    userPWD=$(readUserHashPWD "$sUserInitHashPWD")
    writeUserPWD "$sUserHashPWD" "$userPWD"
-   # userPWDDate=$(readUserPWDTime)
-   # updateUserProperty "$sUserInitPWDTime" "$userPWDDate"
 }
 
 enableUser () {
    echo " -enableUser:" >> "$userPWDlog"
-   # updateUserProperty "$sUserShell" "$(readUserInitShell)"
    restoreStatus
    logoutUser
 }
