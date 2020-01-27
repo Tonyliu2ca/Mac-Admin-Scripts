@@ -49,76 +49,101 @@
 
 
 sUserID=${1:-}
-sUserPWDTime="accountPolicyData"
+#loginUser=$(stat -f "%Su" /dev/console)
+loginUser="$1"
+userPWDlog="/tmp/nochgUserPWD.log"
+
+echo "------- $(date) ($sUserID) -------"  >> "$userPWDlog"
+
+#sUserPWDTime="accountPolicyData"
 sUserHashPWD="ShadowHashData"
 sUserShell="UserShell"
-sUserInitPWDTime="${sUserPWDTime}_Initial"
+#sUserInitPWDTime="${sUserPWDTime}_Initial"
 sUserInitHashPWD="${sUserHashPWD}_Initial"
 sUserInitShell="${sUserShell}_Initial"
 
-StatusChanged=0
-StatusNotChanged=1
+#readUserPWDTime () { 
+#  dscl . -read /users/"$sUserID" accountPolicyData  | tail -n +2 > /tmp/accountPolicyData.plist 
+#  defaults read /tmp/accountPolicyData.plist passwordLastSetTime
+#}
+#readUserInitPWDTime () { dscl . -read /users/"$sUserID" "$sUserInitPWDTime"; }
+# readUserShell   () { dscl . -read /Users/"$sUserID" "$sUserShell" | awk '{ print $2}'; }
+# readUserInitShell   () { dscl . -read /Users/"$sUserID" "$sUserInitShell"; }
+readUserShell   () { dscl . -read /Users/"$sUserID" "$1" | awk '{ print $2}'; }
+writeUserShell  () { dscl . -create /users/"$sUserID" "$1" "$2"; }
 
-readUserPWDTime () { dscl . -read /users/$sUserID "$sUserPWDTime" | grep -A1 "passwordLastSetTime" &>/dev/null }
-readUserHashPWD () { dscl . -read /users/$sUserID "$sUserHashPWD" | tail -1 | tr -dc 0-9a-f &>/dev/null }
-readUserShell   () { dscl . -read /Users/$sUserID "$sUserShell" | awk '{ print $2}' &>/dev/null }
-readUserInitPWDTime () { dscl . -read /users/$sUserID "$sUserInitPWDTime" &>/dev/null }
-readUserInitHashPWD () { dscl . -read /users/$sUserID "$sUserInitHashPWD" &>/dev/null }
-readUserInitShell   () { dscl . -read /Users/$sUserID "$sUserInitShell" &>/dev/null }
-updateUserProperty  () { dscl . -create /users/$sUserID "$1" "$2" &>/dev/null }
-# writeUserPWD () { dscl . -create /users/$sUserID "$1" "$2" }
-# writeUserStatus () { dscl . -create /users/$sUserID "$1" "$2" }
-# writeUserShell () { dscl . -create /Users/$sUserID "$1" "$2" }
+# readUserHashPWD () { defaults read /var/db/dslocal/nodes/Default/users/"$sUserID".plist "$sUserHashPWD"; }
+#readUserInitHashPWD () { defaults read /var/db/dslocal/nodes/Default/users/"$sUserID".plist "$sUserInitHashPWD"; }
+readUserHashPWD () { defaults read /var/db/dslocal/nodes/Default/users/"$sUserID".plist "$1"; }
+writeUserPWD () { defaults write /var/db/dslocal/nodes/Default/users/"$sUserID".plist "$1" "$2"; }
 
 initialUserStatus () {
-   if [[ $(readUserInitPWDTime) ]]; then
-      userPWDTime=$(readUserPWDTime "$sUserPWDTime")
-      userPWD=$(readUserHashPWD "$sUserHashPWD")
-      userShell=$(readUserShell "$sUserShell")
-      updateUserProperty "$sUserInitPWDTime" "$userPWDTime"
-      updateUserProperty "$sUserInitHashPWD" "$userPWD"
-      updateUserProperty "$sUserInitShell" "$userShell"
-   }
+   echo " -initialUserStatus:" >> "$userPWDlog"
+   initPWD=$(readUserHashPWD "$sUserInitHashPWD" 2>/dev/null)
+   if [[ "$initPWD" = "" ]]; then
+      echo "  -initializing: ($sUserInitHashPWD)" >> "$userPWDlog"
+#      userPWDTime=$(readUserPWDTime)
+      uPWD=$(readUserHashPWD "$sUserHashPWD")
+#      userShell=$(readUserShell "$sUserShell")
+      echo "   - uPWD=$uPWD;" >> "$userPWDlog"
+      writeUserPWD "$sUserInitHashPWD" "$uPWD"
+      # writeUserShell "sUserInitShell" "$userShell"
+   else
+      echo "  -was initialized:($sUserInitHashPWD)" >> "$userPWDlog"
+   fi
 }
 
 logoutUser () {
-   while true; do
-      [[ "$(stat -f "%Su" /dev/console)" == "$sUserID" ]] \
-         && launchctl bootout user/$sUserID \
-         || break
-      sleep 5
-   done
+   echo " -logoutUser:" >> "$userPWDlog"
+#   shutdown -r +2
+   killall loginwindow
 }
 
 disableUser () {
-   logoutUser
-   updateUserProperty "$sUserShell" "/usr/bin/false"
+   echo " -disableUser:" >> "$userPWDlog"
+   # updateUserProperty "$sUserShell" "/usr/bin/false"
+   # logoutUser
 }
 
 restoreStatus () {
+   echo " -restoreUserStatus" >> "$userPWDlog"
    userPWD=$(readUserHashPWD "$sUserInitHashPWD")
-   updateUserProperty "$sUserHashPWD" "$userPWD"
-   userPWDDate=$(readUserPWDTime "$sUserPWDTime")
-   updateUserProperty "$sUserInitPWDTime" "$userPWDDate"
+   writeUserPWD "$sUserHashPWD" "$userPWD"
+   # userPWDDate=$(readUserPWDTime)
+   # updateUserProperty "$sUserInitPWDTime" "$userPWDDate"
 }
 
 enableUser () {
-   logoutUser
-   updateUserProperty "$sUserShell" "$(readUserInitShell)"
+   echo " -enableUser:" >> "$userPWDlog"
+   # updateUserProperty "$sUserShell" "$(readUserInitShell)"
    restoreStatus
+   logoutUser
 }
 
 testUserStatusChged () {
-    userStatus=$(readUserPWDTime "$sUserPWDTime")
-    userInitStatus=$(readUserPWDTime "$sUserInitPWDTime")
-    [ "$userStatus" = "$userInitStatus" ] && return 1 || return 0
+    echo " -testUserStatusChged:" >> "$userPWDlog"
+    currentPWD=$(readUserHashPWD "$sUserHashPWD")
+    echo "   -currentPWD=$currentPWD" >> "$userPWDlog"
+    initPWD=$(readUserHashPWD "$sUserInitHashPWD")
+    echo "   -initPWD=$initPWD" >> "$userPWDlog"
+    [ "$currentPWD" = "$initPWD" ] && return 1 || return 0
 }
 
-if [[ ! -z "${sUserID// }" ]]; then
-   initialUserStatus
-   if [ testUserStatusChged ]; then
-       disableUser
-       sleep 20
-       enableUser
+echo "Start: Init_user=$sUserID" >> "$userPWDlog"
+if [[ -n "${sUserID// }" ]]; then
+   echo "     : current user=$(id -un); login user=$loginUser" >> "$userPWDlog"
+   if [ "$sUserID" = "$loginUser" ]; then
+      echo "     : InitUser is $loginUser continue..." >> "$userPWDlog"
+      initialUserStatus
+      if testUserStatusChged; then
+          echo "     : $(id -un) password CHANGED." >> "$userPWDlog"
+          disableUser
+          # sleep 20
+          enableUser
+      else
+         echo "     : $(id -un) password OK." >> "$userPWDlog"
+      fi
    fi
+else
+   echo "     : need a user command line argument." >> "$userPWDlog"
 fi
