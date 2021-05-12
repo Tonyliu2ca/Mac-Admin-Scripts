@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>PayloadDescription</key>
+			<string>Configures SystemUI Server settings</string>
+			<key>PayloadDisplayName</key>
+			<string>SystemUI Server-External Disk</string>
+			<key>PayloadIdentifier</key>
+			<string>D0E1920D-4CF6-4F15-B193-150AEEB9FC9E.com.apple.systemuiserver.53130B51-2A74-4C3C-A574-3EE3BB6B7B38</string>
+			<key>PayloadOrganization</key>
+			<string>LTS ApplePie</string>
+			<key>PayloadType</key>
+			<string>com.apple.systemuiserver</string>
+			<key>PayloadUUID</key>
+			<string>53130B51-2A74-4C3C-A574-3EE3BB6B7B38</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>mount-controls</key>
+			<dict>
+				<key>harddisk-external</key>
+				<array>
+					<string>deny</string>
+					<string>eject</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string>Disable macOS user to access external drive/storage, inlcuding USB flash drive or internal SD card</string>
+	<key>PayloadDisplayName</key>
+	<string>External Storage Disabler</string>
+	<key>PayloadIdentifier</key>
+	<string>com.github.tonyliu2ca.D0E1920D-4CF6-4F15-B193-150AEEB9FC9E</string>
+	<key>PayloadOrganization</key>
+	<string>TonyLiu2ca @ LTS ApplePie</string>
+	<key>PayloadScope</key>
+	<string>System</string>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>D0E1920D-4CF6-4F15-B193-150AEEB9FC9E</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>
