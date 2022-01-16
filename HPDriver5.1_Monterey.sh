@@ -2,8 +2,8 @@
 
 dest="$HOME/Desktop"
 pkgPath="/tmp/HPDrive_Temp"
-rm -fr "$path" >/dev/null 2>&1
-mkdir -p "$path"
+rm -fr "$pkgPath" >/dev/null 2>&1
+mkdir -p "$pkgPath"
 
 # Download from Apple office website
 # Ref: https://support.apple.com/kb/DL1888
