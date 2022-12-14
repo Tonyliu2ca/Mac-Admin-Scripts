@@ -16,7 +16,7 @@ pkgutil --expand /Volumes/HP_PrinterSupportManual/HewlettPackardPrinterDrivers.p
 hdiutil eject /Volumes/HP_PrinterSupportManual
 
 # Udpate 12.0 to 13.0
-sed -i '' 's/12.0/13.0/' "$pkgPath/expaneded/Distribution"
+sed -i '' 's/12.0/14.0/' "$pkgPath/expaneded/Distribution"
 
 # Repack
 pkgutil --flatten "$pkgPath/expaneded" "$dest/HPDrivers5.1_Monterey.pkg"
