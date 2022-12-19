@@ -5,7 +5,7 @@
 	<key>ConsentText</key>
 	<dict>
 		<key>default</key>
-		<string>这个描述文件会统一化登录项警告。在特殊环境中你可能需要禁止它，尤其是在企业管理环境中。对于消费者，你可以安装这个描述文件，但是请特别注意，这种警告意味着你的系统可能会处于不安全的状态，请立刻采取相应措施。请不要滥用，仅在必要时使用。This profile will uniify all Login Items Alerts on macOS 13 and newer. Please don't abuse this, use it whenever it's necessory. You may need it in certain circumstances, especially like enterprise managed enviroment. For consumers, it brings your attention to deal with if there's any Login Item alerts notification. You will leave your system unsafe if you iggnore these security notifications.</string>
+		<string>这个描述文件会统一化登录项警告。在特殊环境中你可能需要禁止它，尤其是在企业管理环境中。对于消费者，你可以安装这个描述文件，但是请特别注意，这种警告意味着你的系统可能会处于不安全的状态，请立刻采取相应措施。请不要滥用，仅在必要时使用。This profile will uniify all Login Item Alerts on macOS 13 and newer. Please don't abuse this, use it when it's necessary. You may need it in certain circumstances, especially like enterprise managed environment. For consumers, this kind of alert brings your attention to deal with carefully and asap. You will leave your system unsafe if you ignore these security notifications.</string>
 	</dict>
 	<key>PayloadContent</key>
 	<array>
@@ -50,7 +50,7 @@
 		</dict>
 	</array>
 	<key>PayloadDescription</key>
-	<string>这个描述文件会统一化登录项警告。在特殊环境中你可能需要禁止它，尤其是在企业管理环境中。对于消费者，你可以安装这个描述文件，但是请特别注意，这种警告意味着你的系统可能会处于不安全的状态，请立刻采取相应措施。请不要滥用，仅在必要时使用。This profile will uniify all Login Items Alerts on macOS 13 and newer. Please don't abuse this, use it whenever it's necessory. You may need it in certain circumstances, especially like enterprise managed enviroment. For consumers, it brings your attention to deal with if there's any Login Item alerts notification. You will leave your system unsafe if you iggnore these security notifications.</string>
+	<string>这个描述文件会统一化登录项警告。在特殊环境中你可能需要禁止它，尤其是在企业管理环境中。对于消费者，你可以安装这个描述文件，但是请特别注意，这种警告意味着你的系统可能会处于不安全的状态，请立刻采取相应措施。请不要滥用，仅在必要时使用。This profile will uniify all Login Item Alerts on macOS 13 and newer. Please don't abuse this, use it when it's necessary. You may need it in certain circumstances, especially like enterprise managed environment. For consumers, this kind of alert brings your attention to deal with carefully and asap. You will leave your system unsafe if you ignore these security notifications.</string>
 	<key>PayloadDisplayName</key>
 	<string>Tonyliu Login Items Alerts Unifier</string>
 	<key>PayloadIdentifier</key>
