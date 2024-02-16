@@ -1,3 +1,4 @@
+------------------------
 # Introduction
 The purpose of these script set are to initialize, create and update macOS installers
 on one USB drive, and support new macOS in the future if it does the same way as Sonoma
@@ -18,8 +19,8 @@ to create installer disk.
     "Monterey.sh" is to create/update Monterey installer on USB drive
 
 
-# HOW-TO  - Basic
 ------------------------
+# HOW-TO  - Basic
 
 ### Get Ready:
     1. Copy this "mk3MacInstallerUSBDisk" folder to your Mac desktop
@@ -28,7 +29,7 @@ to create installer disk.
 
 
 ### Initialize
-    --- Warning: Backup if needed, it will erase and repartition the attached USB disk
+    [Warning]: Backup if needed, it will erase and repartition the attached USB disk
 
     1. Disconnect all USB storage device
     2. Attach one tech USB disk, Allow accessory to connect if prompts
@@ -50,11 +51,13 @@ to create installer disk.
    Run these scripts one after another.
 
 
+------------------------
 # Change Logs:
 2024-02-12: improve script prompts 
 2024-01-24: First Release
 
 
+------------------------
 # Thanks to:
 Hugo Zhao - time on testing, reports and contributions with great ideas.
 
