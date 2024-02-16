@@ -17,12 +17,10 @@ What in the tool set:
     "Ventura.sh" is to create/update Ventura installer on USB drive
     "Monterey.sh" is to create/update Monterey installer on USB drive
 
-#########################################
 # HOW-TO  - Basic
-#########################################
 
 ----------------------------------------
-| Get Ready:
+## Get Ready:
 ----------------------------------------
     1. Copy this "mk3Installer_Disk" folder to your Mac desktop
     2. Make all executable, e.g.
@@ -30,7 +28,7 @@ What in the tool set:
 
 
 --------------------------------------------
-| Initialize
+## Initialize
 --------------------------------------------
 Warning: Backup if needed, it will erase and repartition the attached USB disk
     1. Disconnect all USB storage device
@@ -39,7 +37,7 @@ Warning: Backup if needed, it will erase and repartition the attached USB disk
     4. Key in "y" to continue
 
 ------------------------
-| Create/Update (basic)
+## Create/Update (basic)
 ------------------------
     1. Disconnect all USB storage device and then attach one tech USB disk, Allow accessory to connect if prompts
     2. Put a macOS installer app in the "mk3Installer_Disk" folder
@@ -53,26 +51,42 @@ Warning: Backup if needed, it will erase and repartition the attached USB disk
 
 
 ------------------------
-| Reminders:
+## Reminders:
 ------------------------
 Run these scripts one after another.
 
 
 ------------------------
-| Change Logs:
+## Change Logs:
 ------------------------
 2024-02-12: improve script prompts 
 2024-01-24: First Release
 
 
 ------------------------
-| Thanks to:
+# Thanks to:
 ------------------------
 Hugo Zhao - time on testing, reports and contributions with great ideas.
 
 
 ------------------------
-| Contact
+# Contact
 ------------------------
 Questions, comments, and suggestions are very welcome
-Tony Liu (toliu@cbe.ab.ca)
+
+------------------------
+# License
+------------------------
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
