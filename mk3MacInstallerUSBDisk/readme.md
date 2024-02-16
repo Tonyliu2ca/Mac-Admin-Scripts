@@ -19,8 +19,8 @@ to create installer disk.
 
 
 # HOW-TO  - Basic
+------------------------
 
-----------------------------------------
 ### Get Ready:
     1. Copy this "mk3MacInstallerUSBDisk" folder to your Mac desktop
     2. Make all executable, e.g.
@@ -34,8 +34,7 @@ Warning: Backup if needed, it will erase and repartition the attached USB disk
     3. Run "initialize.sh" as root (i.e. sudo) if the disk hasn't been initialized
     4. Key in "y" to continue
 
-## Create/Update (basic)
-------------------------
+### Create/Update (basic)
     1. Disconnect all USB storage device and then attach one tech USB disk, Allow accessory to connect if prompts
     2. Put a macOS installer app in the "mk3Installer_Disk" folder
     3. Run corresponding script to create installer disk
@@ -46,34 +45,23 @@ Warning: Backup if needed, it will erase and repartition the attached USB disk
        like Ventura, Monterey and etc.
     5. After all done, disconnect your USB disk.
 
-
-------------------------
-## Reminders:
-------------------------
-Run these scripts one after another.
+### Reminders:
+   Run these scripts one after another.
 
 
-------------------------
-## Change Logs:
-------------------------
+# Change Logs:
 2024-02-12: improve script prompts 
 2024-01-24: First Release
 
 
-------------------------
 # Thanks to:
-------------------------
 Hugo Zhao - time on testing, reports and contributions with great ideas.
 
 
-------------------------
-# Contact
-------------------------
 Questions, comments, and suggestions are very welcome
 
 ------------------------
 # License
-------------------------
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
