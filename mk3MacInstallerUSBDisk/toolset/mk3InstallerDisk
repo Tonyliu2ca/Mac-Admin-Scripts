@@ -1,0 +1,481 @@
+#!/bin/bash
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#    Make macOS Sonoma, Ventura, and Monterey Installation disk(s)
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Create macOS Sonoma, Ventura, or Monterey Installer disk(s) on one USB flash drive
+#
+# Optional Arguments:
+#   see -h
+#
+# VERSION: v 3.1.1
+# Tony Liu  2024-
+#
+# History:
+#   2024-01-20: v3.0 is created for tech test
+#   2024-01-23: v3.1 wait loop if unmount failed and warning.
+#   2024-01-29: v3.1.1 update ejectDiskImages for Installers' Shared Support images.
+#   2024-01-30: v3.2 unify the macOS commands' prompt.
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+FDData="uData"
+
+# ----------------------------------------------------------------
+# NO TOUCH BELOW
+# ----------------------------------------------------------------
+FDDiskID=""
+
+InstallAppsTotal=3
+declare -a InstallerAppFQP
+declare -a DiskVolumeNames DiskVolumeIDs
+ExternalDiskDeviceNode=""
+ExternalDiskDeviceID=""
+ExternalDiskDeviceMedia=""
+EraseExternalDisk=false
+NumberPartition=0
+Path2Copy=""
+
+
+# --------------------------------------------------------------------
+# ejectDiskImages()
+# ---------------------------
+# Eject all mounted Disk Images
+# Input: N/A
+# Return: N/A
+# --------------------------------------------------------------------
+ejectDiskImages()
+{
+    /usr/sbin/diskutil list | /usr/bin/awk '/Apple_HFS Shared Support/{ print $NF }' | while read -r line; do
+        [ -n "$line" ] && /usr/sbin/diskutil unmountDisk force "$line" &>/dev/null
+        [ -n "$line" ] && /usr/sbin/diskutil eject "$line" &>/dev/null
+    done
+}
+
+# --------------------------------------------------------------------
+# mkInstallerVolume()
+# -------------------
+# Run createinstallmedia command to make installer volume on target
+# Try up to 3 times, wait 1o seconds each try, if needed
+# Input:
+#   $1      target volume diskid
+#   #2      Installer's full path
+# Return: N/A
+# --------------------------------------------------------------------
+mkInstallerVolume()
+{
+	diskID="$1"
+	installerFullPath="$2"
+	macVol="$(getDiskID_MountPoint "$diskID")"
+	echo -e "\n - Creating $(basename "$installerFullPath") Installation volume [$macVol]-[$diskID]..."
+	maxStep=2; tryagain=0;
+	while ! "${installerFullPath}/Contents/Resources/createinstallmedia" --volume "$macVol" --nointeraction 2>&1 | sed 's/^/      /'; do
+		[ "$tryagain" -ge "$maxStep" ] && break;
+		((tryagain++))
+		sleep 10
+	done
+    if [ "$tryagain" -ge "$maxStep" ]; then
+        echo "Warning: install media was created failed..."
+    fi
+}
+
+# --------------------------------------------------------------------
+# renameInstallerVolumeVersion()
+# -------------------------------
+# Rename an Installer volume with Installer version
+# Input:
+#   $1      Installer app itself
+#   #2      Target volume diskID
+# Return: N/A
+# --------------------------------------------------------------------
+renameInstallerVolumeVersion()
+{
+	local appName="$1"
+	local diskID="$2"
+
+	osVol=$(getDiskID_MountPoint "$diskID")
+	if [ -f "${osVol}/System/Library/CoreServices/SystemVersion.plist" ]; then
+		osVersion="$(defaults read "${osVol}/System/Library/CoreServices/SystemVersion.plist" ProductVersion)"
+	else
+		osVersion="$(defaults read "${osVol}/${appName}/Contents/Info.plist" DTPlatformVersion)"
+		echo "   Warning: the destination volume [diskid=$diskID, vol=$osVol] does not seems a valid macOS installation volume..."
+	fi
+	volName=$(getDiskIDVolumeName "$diskID")
+	/usr/sbin/diskutil rename "$diskID" "${volName} ${osVersion}" &>/dev/null
+}
+
+
+# --------------------------------------------------------------------
+# showHELP()
+# -------------------------------
+# get installer app full name via its FQP
+# Input:
+#   $1      absolute path of Installer app itself
+# Return: .app Installer name
+# --------------------------------------------------------------------
+showHELP()
+{
+    local scriptName="$1"
+    clear
+    echo -e "Create macOS Sonoma, Ventura, and Monterey Installation disk on an USB drive
+
+#   0. For CTS tech use only, 64GB or more USB storage capacity is highly recommended 
+#   1. Backup your  USB disk(s)' data before repartition action
+#   2. Restart your Mac one time if desired
+#   3. Disconnect all USB disks before starts, then connect ONE USB disk
+#	4. Make this script executable, i.e. chmod +x $scriptName
+#	5. Run this script as root, i.e. sudo $scriptName
+#	6. Demo video is available
+#   7. Tools folder in the same location of this script will be copied to "$LastDataVolume" volume
+
+Command Optional Arguments:
+    -h                show this help
+    -p NUMBER         Erase/repartition target USB disk 
+                      NUMBER of Installer partitions, valid number: 1, 2, or 3
+                      The rest spaces volume will be named "$LastDataVolume"
+    -0 INSTALLER      Apply macOS INSTALLER to the 1st Installer partition
+    -1 INSTALLER      Apply macOS INSTALLER to the 2nd Installer partition
+    -2 INSTALLER      Apply macOS INSTALLER to the 3rd Installer partition
+    -c PATH           Copy files in PATH to the uData volume
+
+Note:
+    Each Installer partition size is default 16GB
+    INSTALLER must be a valid macOS Installer app with absolution path
+    PATH must be reachable absolution path
+version 3.2.1\n"
+}
+
+# --------------------------------------------------------------------
+# showExternalDiskInfo()
+# -------------------------------
+# show external USB disk and volume information
+# Input: N/A
+# Return: N/A
+# --------------------------------------------------------------------
+showExternalDiskInfo()
+{
+    echo "External USB disk: $ExternalDiskDeviceMedia [$ExternalDiskDeviceID]"
+    echo "Current Volume(s): total ${#DiskVolumeNames[@]}"
+    for (( i=0; i<${#DiskVolumeNames[@]}; i++)) do
+        echo "   Volume[$i]: [${DiskVolumeIDs[i]}] <=> ${DiskVolumeNames[i]}"
+    done
+}
+
+
+# --------------------------------------------------------------------
+# showInstallersToVolumeNumber()
+# -------------------------------
+# get external USb device info
+# Input: N/A
+# Return: N/A
+# --------------------------------------------------------------------
+showInstallersToVolumeNumber()
+{
+    local i
+    echo -e "\nInstaller(s):"
+    for i in 0 1 2; do
+        if [ -n "${InstallerAppFQP[i]}" ]; then
+            echo "   Create <$(basename "${InstallerAppFQP[i]}")> => Volume[$i]-[${DiskVolumeIDs[i]}]"
+        fi
+    done
+}
+
+# --------------------------------------------------------------------
+# createAllInstallations()
+# -------------------------------
+# create all installer volume
+# Input: N/A
+# Return: N/A
+# --------------------------------------------------------------------
+createAllInstallations()
+{
+    local i
+    for (( i=0; i<InstallAppsTotal; i++ )); do
+        if [ -n "${InstallerAppFQP[i]}" ]; then
+            sleep 5
+            FDDiskID="${DiskVolumeIDs[i]}"
+            echo -e "\n - Remount each volume to specific mount point."
+            ejectDiskImages
+            remountExternalPhysicalAllVolumes "$FDDiskID"
+            echo -e "\n - Start to create installer on <$FDDiskID>, run command createinstallmedia in < ${InstallerAppFQP[i]} >."
+            mkInstallerVolume "$FDDiskID" "${InstallerAppFQP[i]}"
+            echo -e "\n - Rename volume $FDDiskID with macOS version."
+            renameInstallerVolumeVersion "${InstallerAppFQP[i]}" "$FDDiskID"
+        fi
+    done
+}
+
+
+# ####################################################################
+# ALL Partition Related
+# ####################################################################
+declare -a PartitionCode
+PartitionCommandLineOption=""
+PartitionSize="16G"
+
+getDiskIDVolumeName()
+{
+    /usr/sbin/diskutil info "$1" | /usr/bin/grep "Volume Name" | /usr/bin/awk -F":" '{$1=""; print $0}' | xargs
+}
+
+# --------------------------------------------------------------------
+# getExternalPhysicalVolDiskID()
+# ---------------------------
+# Get deviceID of a volume(name) from External Physical disk
+# Inputs:
+#   $1    volume name
+# Return: string of partition disk id. i.e. /dev/disk4s3
+# --------------------------------------------------------------------
+getExternalPhysicalVolDiskID()
+{
+	volName="$1"
+	/usr/sbin/diskutil list external physical | /usr/bin/awk -v pat="$volName" '$0 ~ pat { print $NF }'
+}
+
+# --------------------------------------------------------------------
+# getDiskID_MountPoint()
+# ---------------------------
+# Get mount point from deviceID
+# Input:
+#   $1      Volume's deviceID
+# Return:
+#   string of the mount point(path)
+# --------------------------------------------------------------------
+getDiskID_MountPoint()
+{
+	DiskID="$1"
+	/usr/sbin/diskutil info "$DiskID"| /usr/bin/awk -F ':' '/Mount Point/ { print $2 }' | xargs
+}
+
+# --------------------------------------------------------------------
+# remountExternalPhysicalAllVolumes()
+# ------------------------------------
+# Eject and then remount all volumes on external physical disk
+# Input:
+#   $1      Target disk disk identifier
+# Return: N/A
+# --------------------------------------------------------------------
+remountExternalPhysicalAllVolumes()
+{
+	DiskID="$1"
+    maxStep=6
+	sleep 5
+    local i
+    for (( i=0; i<${#DiskVolumeIDs[@]}; i++)); do
+    	tryagain=0;
+	    while ! /usr/sbin/diskutil umount force "${DiskVolumeIDs[i]}" 2>&1 | sed 's/^/      /'; do
+            [ "$tryagain" -ge "$maxStep" ] && break;
+            ((tryagain++))
+            sleep $((10*tryagain))
+        done
+        [ "$tryagain" -gt "$maxStep" ] && echo "Warning: Installer may fail on disk <${DiskVolumeIDs[i]}, Volume <${DiskVolumeNames[i]}>>. You may force quit and check your USB drive...";
+        VolumePath="/Volumes/${DiskVolumeNames[i]}"
+		/bin/mkdir -p "$VolumePath" &>/dev/null
+		/usr/sbin/diskutil mount -mountPoint "$VolumePath" "${DiskVolumeIDs[i]}" &>/dev/null
+    done
+}
+
+#declare -a ExternalDiskIDList ExternalDiskDeviceName ExternalDiskVolumeNumner 
+#declare -a ExternalDiskVolumeIDList ExternalDiskVolumeNameList
+#ExternalDiskNumber=0
+
+# --------------------------------------------------------------------
+# getExternalDiskInfo()
+# -------------------------------
+# get external USb device info
+# Input: N/A
+# Return: N/A
+# --------------------------------------------------------------------
+getExternalDiskInfo()
+{
+    if [ -z "$(/usr/sbin/diskutil list external physical)" ]; then
+        echo "Error: No External USB disk is found."; exit 1;
+    fi
+
+    # Get External Physical Disk Info
+    ExternalDiskDeviceNode="$(/usr/sbin/diskutil list external physical | /usr/bin/awk '/(external, physical)/ { print $1 }')"
+    ExternalDiskDeviceID="$(/usr/sbin/diskutil info "$ExternalDiskDeviceNode" | /usr/bin/grep "Device Identifier:" | /usr/bin/awk '{ print $NF}')"
+    ExternalDiskDeviceMedia="$(/usr/sbin/diskutil info "$ExternalDiskDeviceNode" | /usr/bin/grep "Media Name:" | /usr/bin/awk -F":" '{$1=""; print $0}' | xargs)"
+
+    # Get Volumes Info on the External Physical Disk
+    local i=0
+	while read -r line; do
+        DiskVolumeIDs[i]="$line"
+        DiskVolumeNames[i]="$(getDiskIDVolumeName "${DiskVolumeIDs[i]}")"
+        ((i++))
+    done < <(/usr/sbin/diskutil list external physical | /usr/bin/awk '/Apple_HFS/ {print $NF}')
+}
+
+# --------------------------------------------------------------------
+# getPartitionLineOption()
+# ------------------
+# Set repartition command line options
+# Input: N/A
+# Return: N/A
+# --------------------------------------------------------------------
+getPartitionLineOption()
+{
+    PartitionCommandLineOption=""
+    local i
+    if [ "$NumberPartition" -gt 0 ]; then
+        for (( i=0; i<NumberPartition; i++ )); do
+            PartitionCode[i]="JHFS+ macOS_${ExternalDiskDeviceID}s$((1+i)) $PartitionSize"
+            PartitionCommandLineOption="$PartitionCommandLineOption ${PartitionCode[i]}"
+        done
+        PartitionCommandLineOption="$PartitionCommandLineOption JHFS+ $FDData 0"
+    fi
+}
+
+# --------------------------------------------------------------------
+# showPartitionInfo()
+# -------------------
+# Show how the external disk will be repartitioned
+# Input: N/A
+# Return: N/A
+# --------------------------------------------------------------------
+showPartitionInfo()
+{
+    if [ "$NumberPartition" -gt 0 ]; then
+    echo "
+--------------- ALERT --------------- ALERT -------------- ALERT ---------------
+| Your external drive will be erased if -p is present, back up before continue |
+--------------------------------------------------------------------------------"
+        echo -e "The external disk will be partitioned to:"
+        local i
+        for (( i=0; i<NumberPartition; i++ )); do
+            echo "   Partition[$i] = [${PartitionCode[i]}]"
+        done
+        echo "   Partition[$i] = [JHFS+ $FDData 0]"
+    else
+        echo "The external USB drive will NOT be erased or repartitioned."
+    fi
+}
+
+# --------------------------------------------------------------------
+# showPartitionInfo()
+# -------------------
+# Show how the external disk will be repartitioned
+# Input: N/A
+# Return: N/A
+# --------------------------------------------------------------------
+startPartition()
+{
+    diskutil mountDisk "$ExternalDiskDeviceID" 2>&1 | sed 's/^/      /'
+    if [ "$NumberPartition" -gt 0 ]; then
+        echo -e "\n - Start to repartition external disk [$ExternalDiskDeviceID]:"
+		/usr/sbin/diskutil unmountDisk force "$ExternalDiskDeviceID" &>/dev/null
+        ((++NumberPartition))
+	    eval "/usr/sbin/diskutil partitionDisk $ExternalDiskDeviceID $NumberPartition GPT $PartitionCommandLineOption 2>&1 | sed 's/^/      /'"
+        getExternalDiskInfo
+    fi
+}
+
+#disableSportlight()
+#{
+#    for (( i=0; i<${#DiskVolumeNames[@]}; i++ )); do
+#        FDDataVol=$(getDiskID_MountPoint "${DiskVolumeIDs[i]}")
+#        touch "${FDDataVol}/.metadata_never_index";
+#    done
+#}
+
+
+#-----------------------------------------------------------
+#-----------------------------------------------------------
+# main()
+#-----------------------------------------------------------
+ScriptRootPath="$(dirname "$0")"
+ScriptName="$(basename "$0")"
+if [ "$EUID" -ne 0 ]
+  then echo "Please run <$ScriptName> as root"
+  exit 2
+fi
+#clear
+# Parse command line arguments
+while getopts "hp:0:1:2:c:" opt; do
+    case $opt in
+        h)
+            showHELP "$ScriptName"
+            exit 0
+            ;;
+        p)
+            EraseExternalDisk=true
+            NumberPartition=$OPTARG
+            ;;
+        0)
+            InstallerAppFQP[0]="$OPTARG"
+            ;;
+        1)
+            InstallerAppFQP[1]="$OPTARG"
+            ;;
+        2)
+            InstallerAppFQP[2]="$OPTARG"
+            ;;
+        c)
+            Path2Copy="$OPTARG"
+            ;;
+        *) exit 1 ;;
+    esac
+done
+if [ "$EraseExternalDisk" = true ] && [ "$NumberPartition" -eq "0" ]; then
+    echo -e "Error: set number of partition(s) with -n.\n-h for more details"
+    exit 0
+fi
+
+ejectDiskImages
+getExternalDiskInfo
+showExternalDiskInfo
+showInstallersToVolumeNumber
+getPartitionLineOption
+showPartitionInfo
+echo ""
+read -r -p "--- Are you sure to continue? [y/n] " response
+case "$response" in
+    [yY][eE][sS]|[yY])
+		echo -e "\n - Start time: $(/bin/date '+%Y-%m-%d %H:%M:%S')"
+        startPartition
+		# index on data
+        # disableSportlight
+
+		# Remount to specific mount point
+
+        # start to create installer disk
+        createAllInstallations
+
+		# Copy -c and Tools folder to uData volume
+		echo -e "\n - copying Tools folder to $FDData..."
+        FDDiskID=$(getExternalPhysicalVolDiskID "$FDData")
+        FDDataVol=$(getDiskID_MountPoint "$FDDiskID")
+		[ -d "$Path2Copy" ] && cp -a "$Path2Copy" "$FDDataVol/" &>/dev/null
+        [ -d "$ScriptRootPath/Tools" ] && cp -a "$ScriptRootPath"/Tools "$FDDataVol/" &>/dev/null
+		cp "$0" "$FDDataVol/" &>/dev/null
+
+		# Cleanup
+		echo -e "\n - Ejecting USB drive..."
+		ejectDiskImages
+		/usr/sbin/diskutil unmountDisk force "$ExternalDiskDeviceID" &>/dev/null
+		echo -e "\n - Complete time: $(/bin/date '+%Y-%m-%d %H:%M:%S')";
+		echo -e "ALL done! Your USB drive could be safely detached from this Mac."
+        ;;
+    *)
+        ;;
+esac
+echo
+getExternalDiskInfo
+showExternalDiskInfo
+exit 0
