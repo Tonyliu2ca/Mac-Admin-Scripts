@@ -21,23 +21,19 @@ to create installer disk.
 # HOW-TO  - Basic
 
 ----------------------------------------
-## Get Ready:
-----------------------------------------
+### Get Ready:
     1. Copy this "mk3MacInstallerUSBDisk" folder to your Mac desktop
     2. Make all executable, e.g.
           chmod -R +x ~/Desktop/mk3Installer_Disk
 
 
---------------------------------------------
-## Initialize
---------------------------------------------
+### Initialize
 Warning: Backup if needed, it will erase and repartition the attached USB disk
     1. Disconnect all USB storage device
     2. Attach one tech USB disk, Allow accessory to connect if prompts
     3. Run "initialize.sh" as root (i.e. sudo) if the disk hasn't been initialized
     4. Key in "y" to continue
 
-------------------------
 ## Create/Update (basic)
 ------------------------
     1. Disconnect all USB storage device and then attach one tech USB disk, Allow accessory to connect if prompts
