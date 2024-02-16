@@ -48,34 +48,33 @@ to create installer disk.
     5. After all done, disconnect your USB disk.
 
 ### Reminders:
-   Run these scripts one after another.
+    Run these scripts one after another.
 
 
 ------------------------
 # Change Logs:
-2024-02-12: improve script prompts 
-2024-01-24: First Release
+    2024-02-12: improve script prompts 
+    2024-01-24: First Release
 
 
 ------------------------
 # Thanks to:
-Hugo Zhao - time on testing, reports and contributions with great ideas.
+    Hugo Zhao - time on testing, reports and contributions with great ideas.
 
 
-Questions, comments, and suggestions are very welcome
+    Questions, comments, and suggestions are very welcome
 
 ------------------------
 # License
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
