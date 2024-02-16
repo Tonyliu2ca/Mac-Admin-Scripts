@@ -28,7 +28,8 @@ to create installer disk.
 
 
 ### Initialize
-Warning: Backup if needed, it will erase and repartition the attached USB disk
+    --- Warning: Backup if needed, it will erase and repartition the attached USB disk
+
     1. Disconnect all USB storage device
     2. Attach one tech USB disk, Allow accessory to connect if prompts
     3. Run "initialize.sh" as root (i.e. sudo) if the disk hasn't been initialized
