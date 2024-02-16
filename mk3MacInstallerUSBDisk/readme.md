@@ -1,9 +1,9 @@
-
+# Introduction
 The purpose of these script set are to initialize, create and update macOS installers
 on one USB drive, and support new macOS in the future if it does the same way as Sonoma
 to create installer disk.
 
-Features:
+### Features:
 	1. Auto detect external USB drive attached
 	2. Add macOS Installer version to the end of Installer volume
 	3. Repartition is needed
@@ -11,18 +11,19 @@ Features:
   5. Update individual Installer whenever a new version is available
 
 
-What in the tool set:
+### What in the tool set:
     "initialize.sh" is for initializing your USB drive(s) one time
     "Sonoma.sh" is to create/update Sonoma installer on USB drive
     "Ventura.sh" is to create/update Ventura installer on USB drive
     "Monterey.sh" is to create/update Monterey installer on USB drive
+
 
 # HOW-TO  - Basic
 
 ----------------------------------------
 ## Get Ready:
 ----------------------------------------
-    1. Copy this "mk3Installer_Disk" folder to your Mac desktop
+    1. Copy this "mk3MacInstallerUSBDisk" folder to your Mac desktop
     2. Make all executable, e.g.
           chmod -R +x ~/Desktop/mk3Installer_Disk
 
