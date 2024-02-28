@@ -1,5 +1,35 @@
 #!/bin/bash
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Move all files in a folder and its subfolders to another folder
+#
+# Desciption:
+#   utilize find command to list all files, exclude folders, in folder A and then move to
+#   folder B, if there's a duplicate file exist, it trys to rename to a new files and then
+#   move.
+#
+# Optional Arguments:
+#   run it with option: -h
+#
+# VERSION: v 1.0
+#
+# History:
+#   2024-02-28: support options:
+#      -h               show help
+#      -o               Overwrite existing or duplicate file in target folder B
+#      -a <folder A>    Absolute path of source folder A
+#      -b <folder B>    Absolute path of target folder B
+#      -p <string>      Appendix adding to duplicate/existing filename
+#                       default is "copy-"
+#      -d               Delete Fodler A after all files moved, default is "No"
+#      -v               Verbose mode
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#  The MIT License (MIT)
+#  Copyright (c) Tony Liu 2024-
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 append="copy-"
 overwrite=false
 deleteFolder=false
@@ -18,7 +48,7 @@ Usage:  $ScriptName [-h] [-o|-d|-v] -a <folder> -b <folder> [-p <string>]
     -b <folder B>    FOP (fully qualified path or absolute path) of target folder B
     -p <string>      Appendix adding to duplicate/existing filename
                      default is "copy-"
-    -d               Delete Fodler A after moved, default is No
+    -d               Delete Fodler A after all are moved, default is "No"
     -v               Verbose mode
 EOF
 exit 0
