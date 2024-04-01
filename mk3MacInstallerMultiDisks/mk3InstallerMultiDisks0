@@ -13,6 +13,7 @@
 #   2024-01-29: v3.4 Support multiple USB disks, add display_mode, exclude Installers DiskID,
 #   2024-01-30: v3.5 Change to support target disk regex expression, like disk+, disk[0-9]$,
 #               prompts format improvements; test using diskutil report: OS Can Be Installed
+#   2024-04-01: able to assign specific volume
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
