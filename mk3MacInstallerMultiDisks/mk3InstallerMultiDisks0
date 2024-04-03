@@ -6,14 +6,17 @@
 # Optional Arguments:
 #   see -h
 #
-# VERSION: v 3.4
+# VERSION: v 3.6.1
 #
 # History:
 #   2024-01-20: v3.0 Created for tech test
 #   2024-01-29: v3.4 Support multiple USB disks, add display_mode, exclude Installers DiskID,
 #   2024-01-30: v3.5 Change to support target disk regex expression, like disk+, disk[0-9]$,
 #               prompts format improvements; test using diskutil report: OS Can Be Installed
-#   2024-04-01: able to assign specific volume
+#   2024-03-11: v3.6 Change to support 0-9 numbers of volumes
+#   2024-04-01：v3.6.1 fix: diskutil command may not report correctly if a volume supports
+#               OS Installed until it's mounted. function: isHFSVolume
+#               copy beheavior: only the one specified with command line argument -c
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -101,6 +104,24 @@ getMountPointbyDiskID() { /usr/sbin/diskutil info "$1" | /usr/bin/awk -F ':' '/M
 # --------------------------------------------------------------------
 isOSVolume() { /usr/sbin/diskutil info "$1" | /usr/bin/awk -F ':' '/OS Can Be Installed/ {$1=""; print $0 }' | xargs; };
 
+
+# --------------------------------------------------------------------
+# isHFSVolume()
+# ---------------------------
+# Get if the volume is Apple_HFS
+# Input:
+#    $1      Volume's deviceID
+# Return:
+#    string of the mount point(path)
+# --------------------------------------------------------------------
+isHFSVolume() {
+    if [ "Apple_HFS" = "$(/usr/sbin/diskutil info "$1" | /usr/bin/awk -F ':' '/Partition Type/ {$1=""; print $0 }' | xargs)" ]; then
+        echo "Yes"
+    else
+        echo "No"
+    fi
+};
+
 # --------------------------------------------------------------------
 # convertTimeElapsed()
 # ---------------------------
@@ -129,25 +150,25 @@ showHELP()
 Create macOS Sonoma, Ventura and Monterey Installer USB disk(s)
 
 Usage:  $scriptName [options]
-    -h                show this help
-    -p NUMBER         (Action), erase and repartition target USB disk(s) 
-                      NUMBER of Installer volume(s), valid number: 1, 2, or 3
-                      The rest spaces volume will be named "$LastDataVolume"
-                      Each Installer partition size is 16GB by default
-    -0 INSTALLER      (Action), create macOS INSTALLER to the 1st volume
-    -1 INSTALLER      (Action), create macOS INSTALLER to the 2nd volume
-    -2 INSTALLER      (Action), create macOS INSTALLER to the 3rd volume
-    -d diskID         Assign target USB disk's diskID. The above actions
-                      will be applied to this USB disk. macOS disk IDs 
-                      is start with "disk" and followed by digit numbers.
-                      Multiple -d options is supported if needed
-                          e.g. "-d disk4 -d disk6"
-                      Regex is supported, like
-                         "-d disk+", all USB disks will match
-                         "-d disk[3-9]$" = only disk3 disk4 ... disk9
-                      INSTALLER's diskID(s) is excluded from target disk
-                      list, even if it's explicitly assigned by -d option.
-    -c PATH           Copy files in PATH to the "$LastDataVolume" volume
+    -h                  show this help
+    -p NUMBER           (Action), erase and repartition target USB disk(s) 
+                        NUMBER of Installer volume(s), valid number: 1, 2, or 3
+                        The rest spaces volume will be named "$LastDataVolume"
+                        Each Installer partition size is 16GB by default
+    -0 to 9 INSTALLER   (Action), put macOS INSTALLER to the [0-9]th volume
+                        support multiple INSTALLERS
+    -d diskID           Assign target USB disk's diskID. The above actions
+                        will be applied to this USB disk. macOS disk IDs 
+                        is start with "disk" and followed by digit numbers.
+                        Multiple -d options is supported if needed
+                            e.g. "-d disk4 -d disk6"
+                        Regex is supported, like
+                           "-d disk+", all USB disks will match
+                           "-d disk[3-9]$" = only disk3 disk4 ... disk9
+                        INSTALLER's diskID(s) is excluded from target disk
+                        list, even if it's explicitly assigned by -d option.
+    -c PATH             Copy files in PATH to the "$LastDataVolume" volume
+    -v                  Show all connected USB device(s) volume(s)
 
     Launch with no option, displays current system attached USB disk(s) info
 
@@ -160,7 +181,7 @@ Comments:
    5. "Tools" folder in the same folder of this script is copied to the last
       volume of each target USB disk(s)
 
-Version 3.5 | 2024-01 | Tony Liu | The MIT License (MIT)
+Version 3.6.1 | 2024-01 | Tony Liu | The MIT License (MIT)
 EOF
 }
 
@@ -338,8 +359,8 @@ copy2LastVolofTargetDisks()
             echo -e " - Copying to [${BackupMountPoints[i]}]:"
             if [ -n "${BackupMountPoints[i]}" ]; then
         		[ -d "$Path2Copy" ] && cp -a "$Path2Copy" "${BackupMountPoints[i]}/" &>/dev/null
-                [ -d "$ScriptRootPath/Tools" ] && cp -a "$ScriptRootPath"/Tools "${BackupMountPoints[i]}/" &>/dev/null
-        		cp -a "$0" "${BackupMountPoints[i]}/" &>/dev/null
+                #[ -d "$ScriptRootPath/Tools" ] && cp -a "$ScriptRootPath"/Tools "${BackupMountPoints[i]}/" &>/dev/null
+        		#cp -a "$0" "${BackupMountPoints[i]}/" &>/dev/null
             fi
         done
     fi
@@ -386,7 +407,7 @@ set_Sys_ExternalDiskIDList()
             # Only "OS Can Be Installed" Volume are considered
 #           if [ "$volType" != "EFI" ]; then
             # echo " ----- $row = Volume $(isOSVolume "$row") ------"
-            if [[ $(isOSVolume "$row") =~ [yY][eE][sS] ]]; then
+            if [[ $(isOSVolume "$row") =~ [yY][eE][sS] ]] || [[ $(isHFSVolume "$row") =~ [yY][eE][sS] ]]; then
                 SysDiskVolumeTypeList[${i}${j}]="$volType"
                 SysDiskVolumeIDList[${i}${j}]="$row"
                 SysDiskVolumeNameList[${i}${j}]=$(/usr/sbin/diskutil info "$row" | /usr/bin/awk -F':' '/Volume Name/ {$1=""; print $0}' | xargs)
@@ -732,7 +753,7 @@ ScriptName="$(basename "$0")"
 # Parse command line arguments
 NumberPartition=0
 ViewMode="Yes"
-while getopts "hvp:0:1:2:c:d:" opt; do
+while getopts "hvp:0:1:2:3:4:5:6:7:8:9:c:d:" opt; do
     case $opt in
         h)
             showHELP "$ScriptName" "$LastDataVolume"
@@ -744,17 +765,10 @@ while getopts "hvp:0:1:2:c:d:" opt; do
             EraseExternalDisk=true
             NumberPartition=$OPTARG
             ;;
-        0)
+        [0-9])
             ViewMode="no"
-            InstallerAppFQP[0]="$OPTARG"
-            ;;
-        1)
-            ViewMode="no"
-            InstallerAppFQP[1]="$OPTARG"
-            ;;
-        2)
-            ViewMode="no"
-            InstallerAppFQP[2]="$OPTARG"
+            InstallerAppFQP[opt]="$OPTARG"
+            #echo "   - InstallerAppFQP[$opt] = ${InstallerAppFQP[opt]}"
             ;;
         c)
             ViewMode="no"
@@ -780,7 +794,7 @@ if [ "$EraseExternalDisk" = true ] && [ "$NumberPartition" -eq "0" ]; then
     exit 0
 fi
 
-[ "$NumberPartition" -gt 3 ] && NumberPartition=3
+[ "$NumberPartition" -gt 10 ] && NumberPartition=10
 
 # 1. Clear all other Installers "Support "
 ejectInstallerDiskImages
