@@ -15,8 +15,8 @@ hdiutil attach "$pkgPath/HPDriver5.1.dmg"
 pkgutil --expand /Volumes/HP_PrinterSupportManual/HewlettPackardPrinterDrivers.pkg "$pkgPath/expaneded"
 hdiutil eject /Volumes/HP_PrinterSupportManual
 
-# Udpate 12.0 to 15.0
-sed -i '' 's/12.0/15.0/' "$pkgPath/expaneded/Distribution"
+# Udpate 12.0 to 16.0
+sed -i '' 's/12.0/16.0/' "$pkgPath/expaneded/Distribution"
 
 # Repack
 pkgutil --flatten "$pkgPath/expaneded" "$dest/HPDrivers5.1_Monterey.pkg"
