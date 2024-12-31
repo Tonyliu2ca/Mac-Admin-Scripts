@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>GKAutoRearm</key>
+			<false/>
+			<key>PayloadDisplayName</key>
+			<string>Security</string>
+			<key>PayloadIdentifier</key>
+			<string>com.apple.security.1A180B24-D03E-4106-A182-5A7680C894EF</string>
+			<key>PayloadType</key>
+			<string>com.apple.security</string>
+			<key>PayloadUUID</key>
+			<string>1A180B24-D03E-4106-A182-5A7680C894EF</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>EnableAssessment</key>
+			<false/>
+			<key>PayloadDisplayName</key>
+			<string>System Policy: Control</string>
+			<key>PayloadIdentifier</key>
+			<string>com.apple.systempolicy.control.DEF6DC62-A325-4448-945E-7017B6FB1B87</string>
+			<key>PayloadType</key>
+			<string>com.apple.systempolicy.control</string>
+			<key>PayloadUUID</key>
+			<string>DEF6DC62-A325-4448-945E-7017B6FB1B87</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>PayloadDisplayName</key>
+	<string>AnySource</string>
+	<key>PayloadIdentifier</key>
+	<string>MacBook.A19E6F28-2906-4633-9002-06B6D4085298</string>
+	<key>PayloadScope</key>
+	<string>System</string>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>A19E6F28-2906-4633-9002-06B6D4085298</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+	<key>TargetDeviceType</key>
+	<integer>5</integer>
+</dict>
+</plist>
