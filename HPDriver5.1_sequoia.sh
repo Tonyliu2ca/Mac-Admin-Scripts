@@ -1,12 +1,13 @@
 #!/bin/bash
 # Description:
-#   Download HP 5.1.1 driver from Apple, modify to allow on macOS Sequoia, install the driver, and have the new version on your desktop.
+#   Download HP 5.1.1 driver from Apple, modify to allow on macOS Sequoia, install the driver, and put the new installer pacakge on your desktop.
 #   Delete the HPDrivers5.1.1_Sequoia.pkg from your Desktop if desired.
 #
-# Update: 2024-11-25
+# Update: 2025-02-25
 
 # Note:
-#   Local drive MUST have 2 GB free spaces at least to run this script
+#   1. Local drive MUST have 2 GB free spaces at least to run this script
+#   2. Give Termial app full disk access privilege in Privacy & Security system settings
 #
 #   Download from Apple official website: HP 5.1.1 Printer Software Update
 #   Ref: https://support.apple.com/en-ca/106385
@@ -32,7 +33,7 @@ sed -i '' 's/15.0/16.9/' "$pkgPath/expaneded/Distribution"
 
 # Repack
 pkgutil --flatten "$pkgPath/expaneded" "$dest/HPDrivers5.1.1_Sequoia.pkg"
-echo "Have the package 'HPDrivers5.1.1_Sequoia.pkg' file on $dest folder."
+echo "The new version package 'HPDrivers5.1.1_Sequoia.pkg' is in $dest folder."
 
 # Clean up
 rm -fr "$pkgPath"
