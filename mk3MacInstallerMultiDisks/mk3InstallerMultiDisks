@@ -6,7 +6,7 @@
 # Optional Arguments:
 #   see -h
 #
-# VERSION: v 3.6.3
+# VERSION: v 3.6.5
 #
 # History:
 #   2024-01-20: v3.0 Created for tech test
@@ -19,6 +19,7 @@
 #               copy beheavior: only the one specified with command line argument -c
 #   2024-11-03: v3.6.2 support up to 10 volumes and other minor updates
 #.  2025-01-27: v3.6.3 Sequoia 15.2 needs 1.62GB more 
+#   2025-10-06: v3.6.5 Tahoe needs 1.28GB more
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -27,7 +28,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 LastDataVolume="uData"
-PartitionSize=( "18G" "18G" "18G" "18G" "18G" "18G" "18G" "18G" "18G" "18G" "18G" )
+PartitionSize=( "20G" "20G" "20G" "20G" "20G" "20G" "20G" "20G" "20G" "20G" "20G" )
 
 
 # ----------------------------------------------------------------
@@ -156,7 +157,7 @@ Usage:  $scriptName [options]
     -p NUMBER           (Action), erase and repartition target USB disk(s) 
                         NUMBER of Installer volume(s), valid number: 1 to 10
                         The rest spaces volume will be named "$LastDataVolume"
-                        Each Installer partition size is 18GB by default
+                        Each Installer partition size is 20GB by default
     -0 to 9 INSTALLER   (Action), put macOS INSTALLER to the [0-9]th volume
                         support multiple INSTALLERS
     -d diskID           Assign target USB disk's diskID. The above actions
