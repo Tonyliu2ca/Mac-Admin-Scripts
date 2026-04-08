@@ -5,9 +5,9 @@ ATTENTION: Initializing process will erase your external drive, backup before co
 
 # [How to initialize your CTS USB flash drives]
 
-- before initialize, unplug all USB devices and then connect your flash drive(s) only
+- before initialize, unplug all USB devices and then connect your flash drive(s) or external disk(s) only
 - run the info.sh to show current system recognized external drive(s)' information (optional step)
-- run initialize.sh
+- run initialize script
      * The "Total" section shows all the current attached external drives
        The "Target" section shows which external drives will be erased, partitioned and formated
        the rest is what will be done on the target drive(s) and other info
@@ -15,11 +15,11 @@ ATTENTION: Initializing process will erase your external drive, backup before co
      * all processes are prompted
      * after initialization done, it unmounts all "Target" USB storages, and you can disconnect them (or run macOS installer scripts) right away. 
      * Once it's done, it says "all done" (adjust your volume ahead)
-- Once your flash drives are initialized, four JHFS+ volumes are created on the "Target" drive(s), this "mk3MacInstallerMultiDisks" folder will be copied to the uData volume, uData can be used as your own storage, it won't be used for macOS Installer. 
+- Once your external flash drives are initialized, desired JHFS+ volumes are created on the "Target" drive(s), this "mk3MacInstallerMultiDisks" folder will be copied to the uData volume, uData can be used as your own storage, it won't be used for macOS Installer unless you want to.
 -You are ready to run the macOS installer scripts
 
 
-# [Make macOS Installer on to CTS USB flash drive(s)]
+# [Make macOS Installer on to USB flash drive(s)]
 
 -----------------------------
 Info:
@@ -28,7 +28,7 @@ Info:
 * macOS Installer app can be from:
     1. Current Mac local drive
     2. network share, like image$, but very slow
-    3. A CTS USB flash drive, which has the macOS installer you want
+    3. Another USB flash drive, which has the macOS installer you want
 
 -----------------------------
 Steps:
