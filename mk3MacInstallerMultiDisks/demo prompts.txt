@@ -1,0 +1,172 @@
+/Users/cbeaccount/Desktop/mk3MacInstallerMultiDisks3.6.4/Sonoma.sh  /Users/cbeaccount/Desktop/Sonoma_14.7.6/Install\ macOS\ Sonoma.app
+
+Exclude External USB disk(s) where Installers are from/on:
+   None External USB disk(s) is excluded.
+   ----------------------------------------------------------------------
+================================================================================
+Total (5) External USB disk(s) recognized by system:
+  * Disk:0, ID=[disk2], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk2s2], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v1]
+      ├─ Volume<1>: ID:[disk2s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+      ├─ Volume<2>: ID:[disk2s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+      ├─ Volume<3>: ID:[disk2s5], Type:[APPLE_HFS], Name:[uData]
+  * Disk:1, ID=[disk3], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk3s2], Type:[APPLE_HFS], Name:[macOSInstaller_disk3v1]
+      ├─ Volume<1>: ID:[disk3s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+      ├─ Volume<2>: ID:[disk3s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+      ├─ Volume<3>: ID:[disk3s5], Type:[APPLE_HFS], Name:[uData]
+  * Disk:2, ID=[disk4], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk4s2], Type:[APPLE_HFS], Name:[macOSInstaller_disk4v1]
+      ├─ Volume<1>: ID:[disk4s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+      ├─ Volume<2>: ID:[disk4s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+      ├─ Volume<3>: ID:[disk4s5], Type:[APPLE_HFS], Name:[uData]
+  * Disk:3, ID=[disk6], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk6s2], Type:[APPLE_HFS], Name:[Install macOS Sonoma 14.3 14.3]
+      ├─ Volume<1>: ID:[disk6s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+      ├─ Volume<2>: ID:[disk6s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+      ├─ Volume<3>: ID:[disk6s5], Type:[APPLE_HFS], Name:[uData]
+  * Disk:4, ID=[disk7], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk7s2], Type:[APPLE_HFS], Name:[Install macOS Sonoma 14.3 14.3 14.3 14.3]
+      ├─ Volume<1>: ID:[disk7s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+      ├─ Volume<2>: ID:[disk7s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+      ├─ Volume<3>: ID:[disk7s5], Type:[APPLE_HFS], Name:[uData]
+================================================================================
+
+Targeted External USB disk(s):
+   ----------------------------------------------------------------------
+   √ Disk:0, ID=[disk2], Name=<DT microDuo 3C>, has 4 Installer volumes
+       ├─ Volume<0>: ID:[disk2s2], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v1]
+       ├─ Volume<1>: ID:[disk2s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+       ├─ Volume<2>: ID:[disk2s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+       ├─ Volume<3>: ID:[disk2s5], Type:[APPLE_HFS], Name:[uData]
+   ----------------------------------------------------------------------
+   √ Disk:1, ID=[disk3], Name=<DT microDuo 3C>, has 4 Installer volumes
+       ├─ Volume<0>: ID:[disk3s2], Type:[APPLE_HFS], Name:[macOSInstaller_disk3v1]
+       ├─ Volume<1>: ID:[disk3s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+       ├─ Volume<2>: ID:[disk3s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+       ├─ Volume<3>: ID:[disk3s5], Type:[APPLE_HFS], Name:[uData]
+   ----------------------------------------------------------------------
+   √ Disk:2, ID=[disk4], Name=<DT microDuo 3C>, has 4 Installer volumes
+       ├─ Volume<0>: ID:[disk4s2], Type:[APPLE_HFS], Name:[macOSInstaller_disk4v1]
+       ├─ Volume<1>: ID:[disk4s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+       ├─ Volume<2>: ID:[disk4s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+       ├─ Volume<3>: ID:[disk4s5], Type:[APPLE_HFS], Name:[uData]
+   ----------------------------------------------------------------------
+   √ Disk:3, ID=[disk6], Name=<DT microDuo 3C>, has 4 Installer volumes
+       ├─ Volume<0>: ID:[disk6s2], Type:[APPLE_HFS], Name:[Install macOS Sonoma 14.3 14.3]
+       ├─ Volume<1>: ID:[disk6s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+       ├─ Volume<2>: ID:[disk6s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+       ├─ Volume<3>: ID:[disk6s5], Type:[APPLE_HFS], Name:[uData]
+   ----------------------------------------------------------------------
+   √ Disk:4, ID=[disk7], Name=<DT microDuo 3C>, has 4 Installer volumes
+       ├─ Volume<0>: ID:[disk7s2], Type:[APPLE_HFS], Name:[Install macOS Sonoma 14.3 14.3 14.3 14.3]
+       ├─ Volume<1>: ID:[disk7s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+       ├─ Volume<2>: ID:[disk7s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+       ├─ Volume<3>: ID:[disk7s5], Type:[APPLE_HFS], Name:[uData]
+   ----------------------------------------------------------------------
+
+Installer(s) will be created on target USB disk(s)'s volume(s):
+   Create <Install macOS Sonoma.app> => Volume<0>
+   None of external USB disk(s) will be erased or repartitioned.
+
+
+ - Start time: 2025-05-15 16:22:28
+   None External USB disk(s) is excluded.
+ - Erase & Partition time used: 0d:00h:00m:22s
+ - Remount All target disk volume(s).
+      Forced unmount of all volumes on disk2 was successful
+      Volume(s) mounted successfully
+      Forced unmount of all volumes on disk3 was successful
+      Volume(s) mounted successfully
+      Forced unmount of all volumes on disk4 was successful
+      Volume(s) mounted successfully
+      Forced unmount of all volumes on disk6 was successful
+      Volume(s) mounted successfully
+      Forced unmount of all volumes on disk7 was successful
+      Volume(s) mounted successfully
+ - Remount time used: 0d:00h:01m:11s
+ - Creating Install macOS Sonoma.app on volume [/Volumes/macOSInstaller_disk2v1]-[disk2s2]...
+      Erasing disk: 0%... 10%... 20%... 30%... 100%
+      Copying essential files...
+      Copying the macOS RecoveryOS...
+      Making disk bootable...
+      Copying to disk: 0%... 10%... 20%... 30%... 40%... 50%... 60%... 70%... 80%... 90%... 100%
+      Install media now available at "/Volumes/Install macOS Sonoma"
+ - Creating Install macOS Sonoma.app on volume [/Volumes/macOSInstaller_disk3v1]-[disk3s2]...
+      Erasing disk: 0%... 10%... 20%... 30%... 100%
+      Copying essential files...
+      Copying the macOS RecoveryOS...
+      Making disk bootable...
+      Copying to disk: 0%... 10%... 20%... 30%... 40%... 50%... 60%... 70%... 80%... 90%... 100%
+      Install media now available at "/Volumes/Install macOS Sonoma"
+ - Creating Install macOS Sonoma.app on volume [/Volumes/macOSInstaller_disk4v1]-[disk4s2]...
+      Erasing disk: 0%... 10%... 20%... 30%... 100%
+      Copying essential files...
+      Copying the macOS RecoveryOS...
+      Making disk bootable...
+      Copying to disk: 0%... 10%... 20%... 30%... 40%... 50%... 60%... 70%... 80%... 90%... 100%
+      Install media now available at "/Volumes/Install macOS Sonoma"
+ - Creating Install macOS Sonoma.app on volume [/Volumes/Install macOS Sonoma 14.3 14.3]-[disk6s2]...
+      Erasing disk: 0%... 10%... 20%... 30%... 100%
+      Copying essential files...
+      Copying the macOS RecoveryOS...
+      Making disk bootable...
+      Copying to disk: 0%... 10%... 20%... 30%... 40%... 50%... 60%... 70%... 80%... 90%... 100%
+      Install media now available at "/Volumes/Install macOS Sonoma"
+ - Creating Install macOS Sonoma.app on volume [/Volumes/Install macOS Sonoma 14.3 14.3 14.3 14.3]-[disk7s2]...
+      Erasing disk: 0%... 10%... 20%... 30%... 100%
+      Copying essential files...
+      Copying the macOS RecoveryOS...
+      Making disk bootable...
+      Copying to disk: 0%... 10%... 20%... 30%... 40%... 50%... 60%... 70%... 80%... 90%... 100%
+      Install media now available at "/Volumes/Install macOS Sonoma"
+ - Create Installer volumes time used: 0d:02h:20m:46s
+ - copying Tools folder to the last volume of each target disk...
+      Volume uData on disk2s5 mounted
+      Volume uData on disk3s5 mounted
+      Volume uData on disk4s5 mounted
+      Volume uData on disk6s5 mounted
+      Volume uData on disk7s5 mounted
+ - Copying to [/Volumes/uData]:
+ - Copying to [/Volumes/uData 1]:
+ - Copying to [/Volumes/uData 2]:
+ - Copying to [/Volumes/uData 3]:
+ - Copying to [/Volumes/uData 4]:
+ - Folder copy/backup time used: 0d:00h:00m:10s
+ - Ejecting USB disk...
+ - ALL done! Your USB disk could be safely detached from this Mac.
+ - TOTAL time used: 0d:02h:22m:29s
+ - Complete time: 2025-05-15 18:45:00
+================================================================================
+Total (5) External USB disk(s) recognized by system:
+  * Disk:0, ID=[disk2], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk2s2], Type:[APPLE_HFS], Name:[Install macOS Sonoma 14.7.6]
+      ├─ Volume<1>: ID:[disk2s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+      ├─ Volume<2>: ID:[disk2s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+      ├─ Volume<3>: ID:[disk2s5], Type:[APPLE_HFS], Name:[uData]
+  * Disk:1, ID=[disk3], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk3s2], Type:[APPLE_HFS], Name:[Install macOS Sonoma 14.7.6]
+      ├─ Volume<1>: ID:[disk3s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+      ├─ Volume<2>: ID:[disk3s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+      ├─ Volume<3>: ID:[disk3s5], Type:[APPLE_HFS], Name:[uData]
+  * Disk:2, ID=[disk4], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk4s2], Type:[APPLE_HFS], Name:[Install macOS Sonoma 14.7.6]
+      ├─ Volume<1>: ID:[disk4s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+      ├─ Volume<2>: ID:[disk4s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+      ├─ Volume<3>: ID:[disk4s5], Type:[APPLE_HFS], Name:[uData]
+  * Disk:3, ID=[disk6], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk6s2], Type:[APPLE_HFS], Name:[Install macOS Sonoma 14.7.6]
+      ├─ Volume<1>: ID:[disk6s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+      ├─ Volume<2>: ID:[disk6s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+      ├─ Volume<3>: ID:[disk6s5], Type:[APPLE_HFS], Name:[uData]
+  * Disk:4, ID=[disk7], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk7s2], Type:[APPLE_HFS], Name:[Install macOS Sonoma 14.7.6]
+      ├─ Volume<1>: ID:[disk7s3], Type:[APPLE_HFS], Name:[Install macOS Sequoia 15.5]
+      ├─ Volume<2>: ID:[disk7s4], Type:[APPLE_HFS], Name:[Install macOS Ventura 13.7.6]
+      ├─ Volume<3>: ID:[disk7s5], Type:[APPLE_HFS], Name:[uData]
+================================================================================
+      Forced unmount of all volumes on disk2 was successful
+      Forced unmount of all volumes on disk3 was successful
+      Forced unmount of all volumes on disk4 was successful
+      Forced unmount of all volumes on disk6 was successful
+      Forced unmount of all volumes on disk7 was successful

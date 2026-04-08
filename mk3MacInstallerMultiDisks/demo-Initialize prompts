@@ -1,0 +1,91 @@
+# /Users/cbeaccount/Desktop/mk3MacInstallerMultiDisks3.6.5/initialize.sh 
+
+Exclude External USB disk(s) where Installers are from/on:
+   None External USB disk(s) is excluded.
+   ----------------------------------------------------------------------
+================================================================================
+Total (1) External USB disk(s) recognized by system:
+  * Disk:0, ID=[disk2], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk2s2], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v1]
+      ├─ Volume<1>: ID:[disk2s3], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v2]
+      ├─ Volume<2>: ID:[disk2s4], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v3]
+      ├─ Volume<3>: ID:[disk2s5], Type:[APPLE_HFS], Name:[uData]
+================================================================================
+
+Targeted External USB disk(s):
+   ----------------------------------------------------------------------
+   √ Disk:0, ID=[disk2], Name=<DT microDuo 3C>, has 4 Installer volumes
+       ├─ Volume<0>: ID:[disk2s2], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v1]
+       ├─ Volume<1>: ID:[disk2s3], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v2]
+       ├─ Volume<2>: ID:[disk2s4], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v3]
+       ├─ Volume<3>: ID:[disk2s5], Type:[APPLE_HFS], Name:[uData]
+   ----------------------------------------------------------------------
+
+Installer(s) will be created on target USB disk(s)'s volume(s):
+
+************ ALERT *********** ALERT *********** ALERT *************
+** Your external USB disk will be erased, back up before continue **
+********************************************************************
+
+The external USB disk(s) will be erased and partitioned:
+   ------------------------------------------------------------
+   √ Disk:0, ID=[disk2], Name=<DT microDuo 3C>
+       ├─ Partition[0] = [ JHFS+ macOSInstaller_disk2v1 20G ]
+       ├─ Partition[1] = [ JHFS+ macOSInstaller_disk2v2 20G ]
+       ├─ Partition[2] = [ JHFS+ macOSInstaller_disk2v3 20G ]
+       ├─ Partition[3] = [ JHFS+ uData 0 ]
+   ------------------------------------------------------------
+
+--- Are you sure to continue? [y/n] y
+
+ - Start time: 2025-10-06 16:14:39
+ - Start to repartition external disk [disk2]:
+      Started partitioning on disk2
+      Unmounting disk
+      Creating the partition map
+      Waiting for partitions to activate
+      Formatting disk2s2 as Mac OS Extended (Journaled) with name macOSInstaller_disk2v1
+      Initialized /dev/rdisk2s2 as a 19 GB case-insensitive HFS Plus volume with a 8192k journal
+      Mounting disk
+      Formatting disk2s3 as Mac OS Extended (Journaled) with name macOSInstaller_disk2v2
+      Initialized /dev/rdisk2s3 as a 19 GB case-insensitive HFS Plus volume with a 8192k journal
+      Mounting disk
+      Formatting disk2s4 as Mac OS Extended (Journaled) with name macOSInstaller_disk2v3
+      Initialized /dev/rdisk2s4 as a 19 GB case-insensitive HFS Plus volume with a 8192k journal
+      Mounting disk
+      Formatting disk2s5 as Mac OS Extended (Journaled) with name uData
+      Initialized /dev/rdisk2s5 as a 2 GB case-insensitive HFS Plus volume with a 8192k journal
+      Mounting disk
+      Finished partitioning on disk2
+      /dev/disk2 (external, physical):
+         #:                       TYPE NAME                    SIZE       IDENTIFIER
+         0:      GUID_partition_scheme                        *62.0 GB    disk2
+         1:                        EFI EFI                     209.7 MB   disk2s1
+         2:                  Apple_HFS macOSInstaller_disk2v1  19.9 GB    disk2s2
+         3:                  Apple_HFS macOSInstaller_disk2v2  19.9 GB    disk2s3
+         4:                  Apple_HFS macOSInstaller_disk2v3  19.9 GB    disk2s4
+         5:                  Apple_HFS uData                   1.7 GB     disk2s5
+   None External USB disk(s) is excluded.
+ - Erase & Partition time used: 0d:00h:04m:06s
+ - Remount All target disk volume(s).
+      Forced unmount of all volumes on disk2 was successful
+      Volume(s) mounted successfully
+ - Remount time used: 0d:00h:00m:39s
+ - Create Installer volumes time used: 0d:00h:00m:00s
+ - copying Tools folder and your </Users/cbeaccount/Desktop/mk3MacInstallerMultiDisks3.6.5> to the last volume of each target disk...
+      Volume uData on disk2s5 mounted
+ - Copying to [/Volumes/uData]:
+ - Folder copy/backup time used: 0d:00h:00m:31s
+ - Ejecting USB disk...
+ - ALL done! Your USB disk could be safely detached from this Mac.
+ - TOTAL time used: 0d:00h:05m:16s
+ - Complete time: 2025-10-06 16:19:55
+================================================================================
+Total (1) External USB disk(s) recognized by system:
+  * Disk:0, ID=[disk2], Name=[DT microDuo 3C], has 4 volumes
+      ├─ Volume<0>: ID:[disk2s2], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v1]
+      ├─ Volume<1>: ID:[disk2s3], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v2]
+      ├─ Volume<2>: ID:[disk2s4], Type:[APPLE_HFS], Name:[macOSInstaller_disk2v3]
+      ├─ Volume<3>: ID:[disk2s5], Type:[APPLE_HFS], Name:[uData]
+================================================================================
+      Forced unmount of all volumes on disk2 was successful
