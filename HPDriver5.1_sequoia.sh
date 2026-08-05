@@ -4,7 +4,7 @@
 #   Delete the HPDrivers5.1.1_Sequoia.pkg from your Desktop if desired.
 #
 # Update: 2025-02-25
-#         2026-08-05: version to 99.9
+#         2026-08-05: support macOS version to 99.9 and other minor updates
 
 # Note:
 #   1. Local drive MUST have 2 GB free spaces at least to run this script
@@ -22,22 +22,32 @@ rm -fr "$pkgPath" >/dev/null 2>&1
 mkdir -p "$pkgPath"
 
 # Download
+echo " - downloading HPDriver5.1.1.dmg."
 curl -o "$pkgPath/HPDriver5.1.1.dmg" https://updates.cdn-apple.com/2021/macos/071-46903-20211101-0BD2764A-901C-41BA-9573-C17B8FDC4D90/HewlettPackardPrinterDrivers.dmg
 
 # Load and extract
-hdiutil attach "$pkgPath/HPDriver5.1.1.dmg"
+hdiutil attach -quiet "$pkgPath/HPDriver5.1.1.dmg"
+echo " - HPDriver5.1.1.dmg is attached."
 pkgutil --expand /Volumes/HP_PrinterSupportManual/HewlettPackardPrinterDrivers.pkg "$pkgPath/expaneded"
-hdiutil eject /Volumes/HP_PrinterSupportManual
+echo " - HPDriver5.1.1.dmg is expanded."
+hdiutil eject -quiet /Volumes/HP_PrinterSupportManual
 
 # Udpate 12.0 to 99.9
+echo " - Updating the version check scripts."
 sed -i '' 's/15.0/99.9/' "$pkgPath/expaneded/Distribution"
 
 # Repack
 pkgutil --flatten "$pkgPath/expaneded" "$dest/HPDrivers5.1.1_Sequoia.pkg"
-echo "The new version package 'HPDrivers5.1.1_Sequoia.pkg' is in $dest folder."
+echo " - a new package 'HPDrivers5.1.1_Sequoia.pkg' is saved in $dest folder."
 
 # Clean up
 rm -fr "$pkgPath"
 
 # install the driver
+echo " - installing the HP printer driver 5.1 on this computer."
 sudo installer -pkg "$dest/HPDrivers5.1.1_Sequoia.pkg" -target /
+
+# Clean up
+echo " - deleting temporary data. all done."
+rm -f "$dest/HPDrivers5.1.1_Sequoia.pkg"
+
