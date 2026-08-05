@@ -4,6 +4,7 @@
 #   Delete the HPDrivers5.1.1_Sequoia.pkg from your Desktop if desired.
 #
 # Update: 2025-02-25
+#         2026-08-05: version to 99.9
 
 # Note:
 #   1. Local drive MUST have 2 GB free spaces at least to run this script
@@ -28,8 +29,8 @@ hdiutil attach "$pkgPath/HPDriver5.1.1.dmg"
 pkgutil --expand /Volumes/HP_PrinterSupportManual/HewlettPackardPrinterDrivers.pkg "$pkgPath/expaneded"
 hdiutil eject /Volumes/HP_PrinterSupportManual
 
-# Udpate 12.0 to 16.0
-sed -i '' 's/15.0/27.0/' "$pkgPath/expaneded/Distribution"
+# Udpate 12.0 to 99.9
+sed -i '' 's/15.0/99.9/' "$pkgPath/expaneded/Distribution"
 
 # Repack
 pkgutil --flatten "$pkgPath/expaneded" "$dest/HPDrivers5.1.1_Sequoia.pkg"
